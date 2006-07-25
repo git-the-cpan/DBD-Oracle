@@ -6,7 +6,7 @@
 
 require 5.003;
 
-$DBD::Oracle::VERSION = '1.17';
+$DBD::Oracle::VERSION = '1.18';
 
 my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 
@@ -832,7 +832,37 @@ SQL
 
 {   package DBD::Oracle::st; # ====== STATEMENT ======
 
-    # all done in XS
+    sub execute_for_fetch {
+       my ($sth, $fetch_tuple_sub, $tuple_status) = @_;
+       my $row_count = 0;
+       my $batch_size = ($sth->{ora_array_chunk_size} ||= 1000);
+       my $tuple_batch_status;
+    
+       if(defined($tuple_status)) {
+           @$tuple_status = ();
+       $tuple_batch_status = [ ];
+    }
+       while (1) {
+           my @tuple_batch;
+           for (my $i = 0; $i < $batch_size; $i++) {
+                push @tuple_batch, [ @{$fetch_tuple_sub->() || last} ];
+            }
+            last unless @tuple_batch;
+            my $res = ora_execute_array($sth,
+                                            \@tuple_batch,
+                                            scalar(@tuple_batch),
+                                            $tuple_batch_status);
+             if(defined($res) && defined($row_count)) {
+                $row_count += $res;
+             } else {
+                $row_count = undef;
+             }
+             push @$tuple_status, @$tuple_batch_status
+                 if defined($tuple_status);
+            }
+            return $row_count;
+   }
+
 }
 
 1;
@@ -1263,6 +1293,26 @@ Force 'blank-padded comparison semantics'.
 If the previous error was from a failed C<prepare> due to a syntax error,
 this attribute gives the offset into the C<Statement> attribute where the
 error was found.
+
+=back
+
+=head2 Statement Handle Attributes
+
+=over 4
+
+=item C<ora_array_chunk_size>
+
+Because of OCI limitations, DBD::Oracle needs to buffer up rows of
+bind values in its C<execute_for_fetch> implementation. This attribute
+sets the number of rows to buffer at a time (default value is 1000).
+
+The C<execute_for_fetch> function will collect (at most) this many
+rows in an array, send them of to the DB for execution, then go back
+to collect the next chunk of rows and so on. This attribute can be
+used to limit or extend the number of rows processed at a time.
+
+Note that this attribute also applies to C<execute_array>, since that
+method is implemented using C<execute_for_fetch>.
 
 =back
 
@@ -2163,7 +2213,6 @@ then you need to tell it which field each LOB param relates to:
 There are some limitations inherent in the way DBD::Oracle makes typical
 LOB operations simple by hiding the LOB Locator processing:
 
- - Can't pass LOBs to/from PL/SQL (except as strings less than 32KB)
  - Can't read/write LOBs in chunks (except via DBMS_LOB.WRITEAPPEND in PL/SQL)
  - To INSERT a LOB, you need UPDATE privilege.
 
@@ -2171,6 +2220,50 @@ The alternative is to disable the automatic LOB Locator processing.
 If L</ora_auto_lob> is 0 in prepare(), you can fetch the LOB Locators and
 do all the work yourself using the ora_lob_*() methods and/or Oracle::OCI.
 See the L</LOB Methods> section below.
+
+=head2 LOB support in PL/SQL
+
+LOB Locators can be passed to PL/SQL calls by binding them to placeholders
+with the proper C<ora_type>.  If L</ora_auto_lob> is true, output LOB
+parameters will be automatically returned as strings. 
+
+If the Oracle driver has support for temporary LOBs (Oracle 9i and higher),
+strings can be bound to input LOB placeholders and will be automatically 
+converted to LOBs.
+
+Example:
+     # Build a large XML document, bind it as a CLOB,
+     # extract elements through PL/SQL and return as a CLOB
+
+     # $dbh is a connected database handle 
+     # output will be large
+
+     local $dbh->{LongReadLen} = 1_000_000;
+
+     my $in_clob = "<document>\n";
+     $in_clob .= "  <value>$_</value>\n" for 1 .. 10_000;
+     $in_clob .= "</document>\n";
+
+     my $out_clob;
+     
+     
+     my $sth = $dbh->prepare(<<PLSQL_END);
+     -- extract 'value' nodes
+     DECLARE
+       x XMLTYPE := XMLTYPE(:in);
+     BEGIN
+       :out := x.extract('/document/value').getClobVal();
+     END;
+
+     PLSQL_END
+     
+     # :in param will be converted to a temp lob
+     # :out parameter will be returned as a string.
+
+     $sth->bind_param( ':in', $in_clob, { ora_type => ORA_CLOB } );
+     $sth->bind_param_inout( ':out', \$out_clob, 0, { ora_type => ORA_CLOB } );
+     $sth->execute;
+
 
 =head2 LOB Locator Methods
 
@@ -2182,6 +2275,10 @@ attribute is false, or returned via PL/SQL procedure calls.
 func() method. Note that methods called via func() don't honour
 RaiseError etc, and so it's important to check $dbh->err after each call.
 It's recommended that you upgrade to DBI 1.38 or later.)
+
+Note that LOB locators are only valid while the statement handle that
+created them is valid.  When all references to the original statement
+handle are lost, the handle is destroyed and the locators are freed.
 
 B<Warning:> Currently multi-byte character set issues have not been
 fully worked out.  So these methods may not do what you expect if
