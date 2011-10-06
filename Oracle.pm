@@ -7,7 +7,7 @@
 
 require 5.006;
 
-$DBD::Oracle::VERSION = '1.30';
+$DBD::Oracle::VERSION = '1.31_00';
 
 my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 
@@ -1580,7 +1580,7 @@ attempts another event.
   #import the ora fail over constants
 
   #set up TAF on the connection
-  my $dbh = DBI->connect('dbi:Oracle:XE','hr','hr',{ora_taf=>1,taf_sleep=>5,ora_taf_function=>'handle_taft'});
+  my $dbh = DBI->connect('dbi:Oracle:XE','hr','hr',{ora_taf=>1,taf_sleep=>5,ora_taf_function=>'handle_taf'});
 
   #create the perl TAF event function
 
