@@ -1,5 +1,9 @@
 Revision history for DBD::Oracle
 
+1.38      2012-01-13
+
+ - promote 1.37_00 to official release
+
 1.37_00   2011-12-30
 
  [ENHANCEMENTS]
