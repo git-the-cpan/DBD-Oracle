@@ -1,6 +1,27 @@
 Revision history for DBD::Oracle
 
-1.38      2012-01-13
+1.39_00   2012-02-24
+
+ [BUG FIXES]
+ - TAF supports now conditional to presence of OCI_ATTR_TAF_ENABLED
+    [RT73798]
+ - detect broken Win32::TieRegistry (patch by Rafael Kitover (Caelum))
+    [RT74544]
+ - PL/SQL out values were not utf8 encoded [RT74753] 
+     (Steve Baldwin + Martin J. Evans)
+
+ [DOCUMENTATION]
+ - Mention the release of Oracle Instant Client 64 bit which does not work
+    on Lion. (Martin J. Evans)
+ - fix DBD::Oracle::GetInfo blurb (patch by Julián Moreno Patiño) [rt74000]
+ - fix typos. (patch by Julián Moreno Patiño) [rt73999]
+ - add troubleshoot doc and diag for error with bequeather. [rt75263]
+
+ [OTHERS]
+ - change the shebang line of examples to the more modern '/usr/bin/env perl'
+    [RT74001]
+
+1.38   2012-01-13
 
  - promote 1.37_00 to official release
 

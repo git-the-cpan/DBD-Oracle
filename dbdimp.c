@@ -902,8 +902,12 @@ dbd_db_login6(SV *dbh, imp_dbh_t *imp_dbh, char *dbname, char *uid, char *pwd, S
 
     if (imp_dbh->using_taf){
 		bool	can_taf;
+        can_taf = 0;
+
+#ifdef OCI_ATTR_TAF_ENABLED
 		OCIAttrGet_log_stat(imp_dbh->srvhp, OCI_HTYPE_SERVER, &can_taf, NULL,
 				OCI_ATTR_TAF_ENABLED, imp_dbh->errhp, status);
+#endif
 
 		if (!can_taf){
 			croak("You are attempting to enable TAF on a server that is not TAF Enabled \n");
@@ -3194,6 +3198,13 @@ dbd_phs_sv_complete(phs_t *phs, SV *sv, I32 debug)
 			SvCUR_set(sv, phs->alen);
 			*SvEND(sv) = '\0';
 			SvPOK_only_UTF8(sv);
+            if (CSFORM_IMPLIES_UTF8(SQLCS_IMPLICIT)) {
+#ifdef sv_utf8_decode
+                sv_utf8_decode(sv);
+#else
+                SvUTF8_on(sv);
+#endif
+            }
 		}
 		else {	/* shouldn't happen */
 			debug = 2;
@@ -3211,6 +3222,13 @@ dbd_phs_sv_complete(phs_t *phs, SV *sv, I32 debug)
 				SvCUR_set(sv, phs->alen);
 				*SvEND(sv) = '\0';
 				SvPOK_only_UTF8(sv);
+                if (CSFORM_IMPLIES_UTF8(SQLCS_IMPLICIT)) {
+#ifdef sv_utf8_decode
+                    sv_utf8_decode(sv);
+#else
+                    SvUTF8_on(sv);
+#endif
+                }
 			}
 			else {	/* shouldn't happen */
 				debug = 2;

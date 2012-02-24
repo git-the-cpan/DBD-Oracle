@@ -1,6 +1,6 @@
 package DBD::Oracle::Troubleshooting;
 {
-  $DBD::Oracle::Troubleshooting::VERSION = '1.38';
+  $DBD::Oracle::Troubleshooting::VERSION = '1.39_00';
 }
 BEGIN {
   $DBD::Oracle::Troubleshooting::AUTHORITY = 'cpan:PYTHIAN';
@@ -17,7 +17,7 @@ DBD::Oracle::Troubleshooting - Tips and Hints to Troubleshoot DBD::Oracle
 
 =head1 VERSION
 
-version 1.38
+version 1.39_00
 
 =head1 CONNECTING TO ORACLE
 
@@ -75,6 +75,22 @@ Protocol Adapter".
 
 If it generates any errors which look relevant then please talk to your
 Oracle technical support (and not the dbi-users mailing list).
+
+=head2 Connecting using a bequeather
+
+If you are using a bequeather to connect to a server
+on the same host as the client, you might have 
+to add 
+
+    bequeath_detach = yes
+
+to your sqlnet.ora file or you won't be able to safely use fork/system
+functions in Perl.
+
+See the discussion at
+L<http://www.nntp.perl.org/group/perl.dbi.dev/2012/02/msg6837.html>
+and L<http://www.nntp.perl.org/group/perl.dbi.users/2009/06/msg34023.html>
+for more gory details.
 
 =head1 USING THE LONG TYPES
 
@@ -304,11 +320,11 @@ in the first table in above list, and not as one would normally
 expect in the process table.
 
 Installing DBI and DBD::Oracle has influence upon this since in
-both cases a few enviroment variables are read or set in the
+both cases a few environment variables are read or set in the
 test phase.
 For DBI it is the logical SYS$SCRATCH, which is a JOB logical.
 For DBD-Oracle it is when testing a new feature in the Oracle 
-RDBMS: UTF8 and UTF16 character set functionallity, and in order 
+RDBMS: UTF8 and UTF16 character set functionality, and in order 
 to do this it sets and unsets the related environment variables 
 NLS_NCHAR and NLS_LANG.
 
