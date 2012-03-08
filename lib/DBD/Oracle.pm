@@ -12,7 +12,7 @@ my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 {
 package DBD::Oracle;
 {
-  $DBD::Oracle::VERSION = '1.39_00';
+  $DBD::Oracle::VERSION = '1.40';
 }
 BEGIN {
   $DBD::Oracle::AUTHORITY = 'cpan:PYTHIAN';
@@ -125,7 +125,7 @@ BEGIN {
 
 {   package DBD::Oracle::dr;
 {
-  $DBD::Oracle::dr::VERSION = '1.39_00';
+  $DBD::Oracle::dr::VERSION = '1.40';
 }
 BEGIN {
   $DBD::Oracle::dr::AUTHORITY = 'cpan:PYTHIAN';
@@ -330,7 +330,7 @@ BEGIN {
 
 {   package DBD::Oracle::db;
 {
-  $DBD::Oracle::db::VERSION = '1.39_00';
+  $DBD::Oracle::db::VERSION = '1.40';
 }
 BEGIN {
   $DBD::Oracle::db::AUTHORITY = 'cpan:PYTHIAN';
@@ -1028,7 +1028,7 @@ SQL
 
 {   package DBD::Oracle::st;
 {
-  $DBD::Oracle::st::VERSION = '1.39_00';
+  $DBD::Oracle::st::VERSION = '1.40';
 }
 BEGIN {
   $DBD::Oracle::st::AUTHORITY = 'cpan:PYTHIAN';
@@ -1133,7 +1133,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 =head1 VERSION
 
-version 1.39_00
+version 1.40
 
 =head1 SYNOPSIS
 
