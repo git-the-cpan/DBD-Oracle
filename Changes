@@ -1,5 +1,38 @@
 Revision history for DBD::Oracle
 
+1.43_00   2012-03-30
+
+ [BUG FIXES]
+ - Applied patch from Rafael Kitover (Caelum) to column_info to handle
+   DEFAULT columns greater in length than the DBI default of 80. The
+   DEFAULT column is a long and it is a PITA to have to set
+   LongReadLen which you can only do on a connection handle in
+   DBD::Oracle. The default maximum size is now 1Mb; above that you
+   will still have to set LongReadLen (Martin J. Evans)
+
+ - Fixed 70meta and rt74753-utf8-encoded to not die if you cannot
+   connect to Oracle or you cannot install from CPAN if you have not
+   set up a valid Oracle connection.
+
+ - Fixed 75163. Bfile lobs were not being opened before fetching if
+   ora_auto_lobs was disabled (Martin J. Evans).
+
+   Note: this has a minor impact on non bfile lobs when ora_auto_lobs
+   is not in force as an additional call to OCILobFileIsOpen will be
+   made.
+
+ - Removed all DBIS usage fixing and speeding up threaded
+   Perls (Martin J. Evans).
+
+ - Minor fix to avoid use of uninitialised variable in 31lob.t (Martin J. Evans)
+
+ [DOCUMENTATION]
+ - clarification of when StrictlyTyped/DiscardString can be used and
+   LongReadLen (Martin J. Evans)
+
+ - Documented the 3rd type of placeholder and rewrote the existing
+   pod for placeholders (Martin J. Evans).
+
 1.42      2012-03-13
  - skip rt74753-utf8-encoded.t if db is not unicode
 
@@ -13,7 +46,7 @@ Revision history for DBD::Oracle
     [RT73798]
  - detect broken Win32::TieRegistry (patch by Rafael Kitover (Caelum))
     [RT74544]
- - PL/SQL out values were not utf8 encoded [RT74753] 
+ - PL/SQL out values were not utf8 encoded [RT74753]
      (Steve Baldwin + Martin J. Evans)
 
  [DOCUMENTATION]
@@ -34,7 +67,7 @@ Revision history for DBD::Oracle
 1.37_00   2011-12-30
 
  [ENHANCEMENTS]
-  - added SYSASM session mode. [RT651211] (patch from 
+  - added SYSASM session mode. [RT651211] (patch from
   Anthony DeRobertis, reported by Julián Moreno Patiño)
 
  [BUG FIXES]
@@ -52,7 +85,7 @@ Revision history for DBD::Oracle
  - Fix documentation for 'ora_fetch_scroll()'
 
 Changes in DBD-Oracle 1.36 (6-12-2011)
-    
+
  - promote 1.35_00 to official release
 
 Changes in DBD-Oracle 1.35_00 (18-11-2011)
@@ -112,7 +145,7 @@ Changes in DBD-Oracle 1.31_00
  - don't gag diag() on the tests by default
  - SKIP condition in 10general.t was reversed (reported by Alois) [RT#46761]
  - Check for LD_LIBRARY_PATH_(32|64) as well for solaris [RT#46761]
- - convert a symbolically linked ORACLE_HOME to an absolute path 
+ - convert a symbolically linked ORACLE_HOME to an absolute path
     (patch by H.Merijn Brand, applied by Martin J. Evans) [rt70785]
 
  [DOCUMENTATION]

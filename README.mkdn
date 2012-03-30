@@ -4,7 +4,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 # VERSION
 
-version 1.42
+version 1.43_00
 
 # SYNOPSIS
 
@@ -953,7 +953,12 @@ Should be rarely needed.
 
 ## __LongReadLen__
 
-Implemented by DBI, no driver-specific impact.
+The maximum size of long or longraw columns to retrieve. If one of
+these columns is longer than LongReadLen then either a data truncation
+error will be raised (LongTrunkOk is false) or the column will be
+silently truncated (LongTruncOk is true).
+
+DBI currently defaults this to 80.
 
 ## __LongTruncOk__
 
@@ -1104,19 +1109,34 @@ See [Row Prefetching](#pod_Row Prefetching) for more details.
 
 ### __Placeholders__
 
-There are two types of placeholders that can be used in DBD::Oracle. The first is
-the "question mark" type, in which each placeholder is represented by a single
-question mark character. This is the method recommended by the DBI specs and is the most
-portable. Each question mark is internally replaced by a "dollar sign number" in the order
-in which they appear in the query (important when using [bind_param](#pod_bind_param)).
+There are three types of placeholders that can be used in
+DBD::Oracle.
 
-The other placeholder type is "named parameters" in the format ":foo" which is the one Oralce prefers.
+The first is the "question mark" type, in which each placeholder is
+represented by a single question mark character. This is the method
+recommended by the DBI and is the most portable. Each question
+mark is internally replaced by a "dollar sign number" in the order in
+which they appear in the query (important when using [bind_param](#pod_bind_param)).
+
+The second type of placeholder is "named parameters" in the format
+":foo" which is the one Oracle prefers.
 
    $dbh->{RaiseError} = 1;        # save having to check each method call
    $sth = $dbh->prepare("SELECT name, age FROM people WHERE name LIKE :name");
    $sth->bind_param(':name', "John%");
    $sth->execute;
    DBI::dump_results($sth);
+
+Note when calling bind_param with named parameters you must include
+the leading colon. The advantage of this placeholder type is that you
+can use the same placeholder more than once in the same SQL statement
+but you only need to bind it once.
+
+The last placeholder type is a variation of the two above where you
+name each placeholder :N (where N is a number). Like the named
+placeholders above you can use the same placeholder multiple times in
+the SQL but when you call bind_param you only need to pass the N
+(e.g., for :1 you use bind_param(1,...) and not bind_param(':1',...).
 
 The different types of placeholders cannot be mixed within a statement, but you may
 use different ones for each statement handle you have. This is confusing at best, so
@@ -1309,7 +1329,11 @@ Especially the length of FLOATs may be wrong.
 
 Datatype codes for non-standard types are subject to change.
 
-Attention! The DATA_DEFAULT (COLUMN_DEF) column is of type LONG.
+Attention! The DATA_DEFAULT (COLUMN_DEF) column is of type LONG so you
+may have to set LongReadLen on the connection handle before calling
+column_info if you have a large default column. After DBD::Oracle 1.40
+LongReadLen is set automatically to 1Mb when calling column_info and
+reset aftwerwards.
 
 The result set is ordered by TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION.
 
@@ -2078,9 +2102,9 @@ Column numbers count up from 1. You do not need to bind output columns in order 
 
 NOTE: DBD::Oracle does not use the `$bind_type` to determine how to
 bind the column; it uses what Oracle says the data type is. You can
-however set a numeric bind type with the bind attributes
-StrictlyTyped/DiscardString as these attributes are applied after the
-column is retrieved.
+however set the StrictlyTyped/DiscardString attributes and these will
+take effect as these attributes are applied after the column is
+retrieved.
 
 See the DBI documentation for a discussion of the optional parameters `\%attr` and `$bind_type`
 

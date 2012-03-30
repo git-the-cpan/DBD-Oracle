@@ -12,7 +12,7 @@ my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 {
 package DBD::Oracle;
 {
-  $DBD::Oracle::VERSION = '1.42';
+  $DBD::Oracle::VERSION = '1.43_00';
 }
 BEGIN {
   $DBD::Oracle::AUTHORITY = 'cpan:PYTHIAN';
@@ -125,7 +125,7 @@ BEGIN {
 
 {   package DBD::Oracle::dr;
 {
-  $DBD::Oracle::dr::VERSION = '1.42';
+  $DBD::Oracle::dr::VERSION = '1.43_00';
 }
 BEGIN {
   $DBD::Oracle::dr::AUTHORITY = 'cpan:PYTHIAN';
@@ -330,7 +330,7 @@ BEGIN {
 
 {   package DBD::Oracle::db;
 {
-  $DBD::Oracle::db::VERSION = '1.42';
+  $DBD::Oracle::db::VERSION = '1.43_00';
 }
 BEGIN {
   $DBD::Oracle::db::AUTHORITY = 'cpan:PYTHIAN';
@@ -753,7 +753,38 @@ SQL
 	    }
 	}
 	$SQL .= " ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION\n";
-	my $sth = $dbh->prepare( $SQL ) or return undef;
+        
+
+        # Since DATA_DEFAULT is a LONG, DEFAULT values longer than 80 chars will
+        # throw an ORA-24345 by default; so we check if LongReadLen is set at
+        # the default value, and if so, set it to something less likely to fail
+        # in common usage.
+        #
+        # We do not set LongTruncOk however as that would make COLUMN_DEF
+        # incorrect, in those (extreme!) cases it would be better if the user
+        # sets LongReadLen herself.
+
+        my $long_read_len = $dbh->FETCH('LongReadLen');
+
+        my ($sth, $exc);
+
+        {
+            local $@;
+            eval {
+                $dbh->STORE(LongReadLen => 1024*1024) if $long_read_len == 80;
+                $sth = $dbh->prepare( $SQL );
+            };
+            $exc = $@;
+        }
+        if ($exc) {
+            $dbh->STORE(LongReadLen => 80) if $long_read_len == 80;
+            die $exc;
+        }
+
+        $dbh->STORE(LongReadLen => 80) if $long_read_len == 80;
+
+        return undef if not $sth;
+
 	$sth->execute( @BindVals ) or return undef;
 	$sth;
     }
@@ -1028,7 +1059,7 @@ SQL
 
 {   package DBD::Oracle::st;
 {
-  $DBD::Oracle::st::VERSION = '1.42';
+  $DBD::Oracle::st::VERSION = '1.43_00';
 }
 BEGIN {
   $DBD::Oracle::st::AUTHORITY = 'cpan:PYTHIAN';
@@ -1133,7 +1164,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 =head1 VERSION
 
-version 1.42
+version 1.43_00
 
 =head1 SYNOPSIS
 
@@ -2098,7 +2129,12 @@ Should be rarely needed.
 
 =head2 B<LongReadLen>
 
-Implemented by DBI, no driver-specific impact.
+The maximum size of long or longraw columns to retrieve. If one of
+these columns is longer than LongReadLen then either a data truncation
+error will be raised (LongTrunkOk is false) or the column will be
+silently truncated (LongTruncOk is true).
+
+DBI currently defaults this to 80.
 
 =head2 B<LongTruncOk>
 
@@ -2253,19 +2289,34 @@ See L</Row Prefetching> for more details.
 
 =head3 B<Placeholders>
 
-There are two types of placeholders that can be used in DBD::Oracle. The first is
-the "question mark" type, in which each placeholder is represented by a single
-question mark character. This is the method recommended by the DBI specs and is the most
-portable. Each question mark is internally replaced by a "dollar sign number" in the order
-in which they appear in the query (important when using L</bind_param>).
+There are three types of placeholders that can be used in
+DBD::Oracle.
 
-The other placeholder type is "named parameters" in the format ":foo" which is the one Oralce prefers.
+The first is the "question mark" type, in which each placeholder is
+represented by a single question mark character. This is the method
+recommended by the DBI and is the most portable. Each question
+mark is internally replaced by a "dollar sign number" in the order in
+which they appear in the query (important when using L</bind_param>).
+
+The second type of placeholder is "named parameters" in the format
+":foo" which is the one Oracle prefers.
 
    $dbh->{RaiseError} = 1;        # save having to check each method call
    $sth = $dbh->prepare("SELECT name, age FROM people WHERE name LIKE :name");
    $sth->bind_param(':name', "John%");
    $sth->execute;
    DBI::dump_results($sth);
+
+Note when calling bind_param with named parameters you must include
+the leading colon. The advantage of this placeholder type is that you
+can use the same placeholder more than once in the same SQL statement
+but you only need to bind it once.
+
+The last placeholder type is a variation of the two above where you
+name each placeholder :N (where N is a number). Like the named
+placeholders above you can use the same placeholder multiple times in
+the SQL but when you call bind_param you only need to pass the N
+(e.g., for :1 you use bind_param(1,...) and not bind_param(':1',...).
 
 The different types of placeholders cannot be mixed within a statement, but you may
 use different ones for each statement handle you have. This is confusing at best, so
@@ -2458,7 +2509,11 @@ Especially the length of FLOATs may be wrong.
 
 Datatype codes for non-standard types are subject to change.
 
-Attention! The DATA_DEFAULT (COLUMN_DEF) column is of type LONG.
+Attention! The DATA_DEFAULT (COLUMN_DEF) column is of type LONG so you
+may have to set LongReadLen on the connection handle before calling
+column_info if you have a large default column. After DBD::Oracle 1.40
+LongReadLen is set automatically to 1Mb when calling column_info and
+reset aftwerwards.
 
 The result set is ordered by TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION.
 
@@ -3239,9 +3294,9 @@ Column numbers count up from 1. You do not need to bind output columns in order 
 
 NOTE: DBD::Oracle does not use the C<$bind_type> to determine how to
 bind the column; it uses what Oracle says the data type is. You can
-however set a numeric bind type with the bind attributes
-StrictlyTyped/DiscardString as these attributes are applied after the
-column is retrieved.
+however set the StrictlyTyped/DiscardString attributes and these will
+take effect as these attributes are applied after the column is
+retrieved.
 
 See the DBI documentation for a discussion of the optional parameters C<\%attr> and C<$bind_type>
 
