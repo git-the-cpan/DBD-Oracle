@@ -59,6 +59,7 @@ constant(name=Nullch)
 	OCI_FO_SESSION			= OCI_FO_SESSION
 	OCI_FO_SELECT			= OCI_FO_SELECT
 	OCI_FO_TXNAL			= OCI_FO_TXNAL
+	OCI_FO_RETRY			= OCI_FO_RETRY
 	OCI_STMT_SCROLLABLE_READONLY 	= 0x08
 	OCI_PRELIM_AUTH 		= 0x00000008
 	OCI_DBSTARTUPFLAG_FORCE 	= 0x00000001
@@ -160,6 +161,8 @@ ora_fetch_scroll(sth,fetch_orient,fetch_offset)
  	imp_sth->fetch_orient=fetch_orient;
 	imp_sth->fetch_offset=fetch_offset;
 	av = dbd_st_fetch(sth,imp_sth);
+    imp_sth->fetch_offset = 1;                  /* default back to 1 for fetch */
+ 	imp_sth->fetch_orient=OCI_FETCH_NEXT;       /* default back to fetch next */
 	ST(0) = (av) ? sv_2mortal(newRV((SV *)av)) : &PL_sv_undef;
 }
 

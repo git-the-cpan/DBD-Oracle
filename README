@@ -2,7 +2,7 @@ NAME
     DBD::Oracle - Oracle database driver for the DBI module
 
 VERSION
-    version 1.44
+    version 1.45_00
 
 SYNOPSIS
       use DBI;
@@ -75,7 +75,7 @@ CONSTANTS
 
     :ora_fail_over
           OCI_FO_END OCI_FO_ABORT OCI_FO_REAUTH OCI_FO_BEGIN OCI_FO_ERROR
-          OCI_FO_NONE OCI_FO_SESSION OCI_FO_SELECT OCI_FO_TXNAL
+          OCI_FO_NONE OCI_FO_SESSION OCI_FO_SELECT OCI_FO_TXNAL OCI_FO_RETRY
 
 DBI CLASS METHODS
   connect
@@ -219,7 +219,7 @@ DBI CLASS METHODS
     If you try to set up a callback without it being enabled DBD::Oracle
     will croak.
 
-    It is outside the scope of this documents to go through all of the
+    It is outside the scope of this document to go through all of the
     possible TAF situations you might want to set up but here is a simple
     example:
 
@@ -243,7 +243,9 @@ DBI CLASS METHODS
       #import the ora fail over constants
 
       #set up TAF on the connection
-      my $dbh = DBI->connect('dbi:Oracle:XE','hr','hr',{ora_taf=>1,taf_sleep=>5,ora_taf_function=>'handle_taf'});
+      # NOTE since DBD::Oracle uses call_pv you may need to pass a full
+      # name space as the function e.g., 'main::handle_taf'
+      my $dbh = DBI->connect('dbi:Oracle:XE','hr','hr',{ora_taf=>1,ora_taf_sleep=>5,ora_taf_function=>'handle_taf'});
 
       #create the perl TAF event function
 
@@ -272,6 +274,9 @@ DBI CLASS METHODS
         }
         elsif ($fo_event == OCI_FO_ERROR){
            print " Failover error Sleeping...\n";
+           # DBD::Oracle will sleep for ora_taf_sleep if you return OCI_FO_RETRY
+           # If you want to stop retrying just return 0
+           return OCI_FO_RETRY;
         }
         else {
            printf(" Bad Failover Event: %d.\n",  $fo_event);
@@ -376,9 +381,14 @@ DBI CLASS METHODS
          return;
       }
 
+    Note you'll probably have to use the full name space when setting the
+    TAF function e.g., 'main::my_taf_function' and not just
+    'my_taf_function'.
+
    ora_taf_sleep
-    The amount of time in seconds the OCI client will sleep between
-    attempting successive failover events when the event is OCI_FO_ERROR.
+    The amount of time in seconds DBD::Oracle will sleep between attempting
+    successive failover events when the event is OCI_FO_ERROR and
+    OCI_FO_RETRY is returned from the TAF handler.
 
    ora_session_mode
     The ora_session_mode attribute can be used to connect with SYSDBA,
@@ -424,6 +434,8 @@ DBI CLASS METHODS
 
     The maximum size is 48 bytes.
 
+    NOTE: You will need an Oracle client 10.1 or later to use this.
+
    ora_driver_name
     For 11g and later you can now set the name of the driver layer using
     OCI. Perl, Perl5, ApachePerl so on. Names starting with "ORA" are
@@ -443,6 +455,8 @@ DBI CLASS METHODS
       my $dbh = DBI->connect($dsn, $user, $passwd, { ora_client_info => 'Remote2' });
 
       $dbh->{ora_client_info} = "Remote2";
+
+    NOTE: You will need an Oracle client 10.1 or later to use this.
 
    ora_client_identifier
     Allows you to specify the user identifier in the session handle.
@@ -464,6 +478,8 @@ DBI CLASS METHODS
        my $dbh = DBI->connect($dsn, $user, $passwd, { ora_action => "Login"});
 
        $dbh->{ora_action} = "New Long Query 22";
+
+    NOTE: You will need an Oracle client 10.1 or later to use this.
 
    ora_dbh_share
     Requires at least Perl 5.8.0 compiled with ithreads.
@@ -515,6 +531,12 @@ DBI CLASS METHODS
 
     In both cases the DBD::Oracle trace level is set to 6, which is the
     highest level tracing most of the calls to OCI.
+
+    NOTE: In future versions of DBD::Oracle ora_verbose will be changed so
+    that it is simply a switch to turn DBI's DBD tracing on or off. A true
+    value will turn it on and a false value will turn it off. DBI's "DBD"
+    tracing was not available when ora_verbose was created and ora_verbose
+    adds an additional test to every trace test.
 
    ora_oci_success_warn
     Use this value to print otherwise silent OCI warnings that may happen
@@ -3625,7 +3647,7 @@ OTHER DATA TYPES
       print "$i0 to $o0, $i1 to $o1\n";
       # Result is : "'' to '(undef)', 'Something else' to '1'"
 
-   Support for Insert of XMLType (ORA_XMLTYPE)
+  Support for Insert of XMLType (ORA_XMLTYPE)
     Inserting large XML data sets into tables with XMLType fields is now
     supported by DBD::Oracle. The only special requirement is the use of
     bind_param() with an attribute hash parameter that specifies ora_type as
@@ -3657,7 +3679,7 @@ OTHER DATA TYPES
     that is smaller than 32k as well. Attempting to insert malformed XML
     will cause an error.
 
-   Binding Cursors
+  Binding Cursors
     Cursors can be returned from PL/SQL blocks, either from stored functions
     (or procedures with OUT parameters) or from direct "OPEN" statements, as
     shown below:
@@ -3726,7 +3748,7 @@ OTHER DATA TYPES
     See the "curref.pl" script in the Oracle.ex directory in the DBD::Oracle
     source distribution for a complete working example.
 
-   Fetching Nested Cursors
+  Fetching Nested Cursors
     Oracle supports the use of select list expressions of type REF CURSOR.
     These may be explicit cursor expressions - "CURSOR(SELECT ...)", or
     calls to PL/SQL functions which return REF CURSOR values. The values of
@@ -3780,7 +3802,7 @@ OTHER DATA TYPES
         my ($nested) = $sth->fetchrow_array;
         while ( my @row = $nested->fetchrow_array ) { ... }
 
-   Pre-fetching Nested Cursors
+  Pre-fetching Nested Cursors
     By default, DBD::Oracle pre-fetches rows in order to reduce the number
     of round trips to the server. For queries which do not involve nested
     cursors, the number of pre-fetched rows is controlled by the DBI
@@ -4194,6 +4216,8 @@ AUTHORS
     *   John Scoles
 
     *   Yanick Champoux <yanick@cpan.org>
+
+    *   Martin J. Evans <mjevans@cpan.org>
 
 COPYRIGHT AND LICENSE
     This software is copyright (c) 1994 by Tim Bunce.

@@ -1,6 +1,6 @@
 package DBD::Oracle::Object;
 {
-  $DBD::Oracle::Object::VERSION = '1.44';
+  $DBD::Oracle::Object::VERSION = '1.45_00';
 }
 BEGIN {
   $DBD::Oracle::Object::AUTHORITY = 'cpan:PYTHIAN';
@@ -39,7 +39,7 @@ DBD::Oracle::Object - Wrapper for Oracle objects
 
 =head1 VERSION
 
-version 1.44
+version 1.45_00
 
 =head1 AUTHORS
 
@@ -56,6 +56,10 @@ John Scoles
 =item *
 
 Yanick Champoux <yanick@cpan.org>
+
+=item *
+
+Martin J. Evans <mjevans@cpan.org>
 
 =back
 

@@ -778,9 +778,12 @@ oci_attr_name(ub4 attr)
 	case OCI_ATTR_RESERVED_13:			return "OCI_ATTR_RESERVED_13";		/* reserved */
 
 	/* OCI_ATTR_RESERVED_14 */
-
+#ifdef OCI_ATTR_RESERVED_15
 	case OCI_ATTR_RESERVED_15:			return "OCI_ATTR_RESERVED_15";		/* reserved */
+#endif
+#ifdef OCI_ATTR_RESERVED_16
 	case OCI_ATTR_RESERVED_16:			return "OCI_ATTR_RESERVED_16";		/* reserved */
+#endif
 
 	}
 	sv = sv_2mortal(newSViv((IV)attr));
@@ -1305,6 +1308,8 @@ sb4
 taf_cbk(dvoid *svchp, dvoid *envhp, dvoid *fo_ctx,ub4 fo_type, ub4 fo_event )
 {
 	dTHX;
+    int return_count;
+    int ret;
 	taf_callback_t *cb =(taf_callback_t*)fo_ctx;
 
 	dSP;
@@ -1312,8 +1317,15 @@ taf_cbk(dvoid *svchp, dvoid *envhp, dvoid *fo_ctx,ub4 fo_type, ub4 fo_event )
 	XPUSHs(sv_2mortal(newSViv(fo_event)));
 	XPUSHs(sv_2mortal(newSViv(fo_type)));
 	PUTBACK;
-	call_pv(cb->function, G_DISCARD);
+	return_count = call_pv(cb->function, G_SCALAR);
 
+    SPAGAIN;
+    
+    if (return_count != 1)
+        croak("Expected one scalar back from taf handler");
+
+    ret = POPi;
+    
 	switch (fo_event){
 
 		case OCI_FO_BEGIN:
@@ -1325,8 +1337,10 @@ taf_cbk(dvoid *svchp, dvoid *envhp, dvoid *fo_ctx,ub4 fo_type, ub4 fo_event )
 		}
 		case OCI_FO_ERROR:
 		{
-			sleep(cb->sleep);
-			return OCI_FO_RETRY;
+            if (ret == OCI_FO_RETRY) {
+                sleep(cb->sleep);
+                return OCI_FO_RETRY;
+            }
 			break;
 		}
 
@@ -1335,6 +1349,8 @@ taf_cbk(dvoid *svchp, dvoid *envhp, dvoid *fo_ctx,ub4 fo_type, ub4 fo_event )
 			break;
 		}
 	}
+    PUTBACK;
+    
 	return 0;
 }
 
@@ -3985,7 +4001,7 @@ dbd_st_fetch(SV *sth, imp_sth_t *imp_sth){
 
 			OCIStmtFetch_log_stat(imp_sth, imp_sth->stmhp, imp_sth->errhp,1, imp_sth->fetch_orient,imp_sth->fetch_offset, status);
 				/*this will work without a round trip so might as well open it up for all statments handles*/
-				/* defualt and OCI_FETCH_NEXT are the same so this avoids miscaluation on the next value*/
+				/* default and OCI_FETCH_NEXT are the same so this avoids miscaluation on the next value*/
 			OCIAttrGet_stmhp_stat(imp_sth, &imp_sth->fetch_position, 0, OCI_ATTR_CURRENT_POSITION, status);
 
 			if (DBIc_DBISTATE(imp_sth)->debug >= 4 || dbd_verbose >= 4 )
