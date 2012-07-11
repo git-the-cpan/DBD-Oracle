@@ -12,7 +12,7 @@ my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 {
 package DBD::Oracle;
 {
-  $DBD::Oracle::VERSION = '1.46';
+  $DBD::Oracle::VERSION = '1.47_00';
 }
 BEGIN {
   $DBD::Oracle::AUTHORITY = 'cpan:PYTHIAN';
@@ -125,7 +125,7 @@ BEGIN {
 
 {   package DBD::Oracle::dr;
 {
-  $DBD::Oracle::dr::VERSION = '1.46';
+  $DBD::Oracle::dr::VERSION = '1.47_00';
 }
 BEGIN {
   $DBD::Oracle::dr::AUTHORITY = 'cpan:PYTHIAN';
@@ -330,7 +330,7 @@ BEGIN {
 
 {   package DBD::Oracle::db;
 {
-  $DBD::Oracle::db::VERSION = '1.46';
+  $DBD::Oracle::db::VERSION = '1.47_00';
 }
 BEGIN {
   $DBD::Oracle::db::AUTHORITY = 'cpan:PYTHIAN';
@@ -1059,7 +1059,7 @@ SQL
 
 {   package DBD::Oracle::st;
 {
-  $DBD::Oracle::st::VERSION = '1.46';
+  $DBD::Oracle::st::VERSION = '1.47_00';
 }
 BEGIN {
   $DBD::Oracle::st::AUTHORITY = 'cpan:PYTHIAN';
@@ -1164,7 +1164,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 =head1 VERSION
 
-version 1.46
+version 1.47_00
 
 =head1 SYNOPSIS
 
@@ -4187,6 +4187,12 @@ handle are lost, the handle is destroyed and the locators are freed.
 
 Read a portion of the LOB. $offset starts at 1.
 Uses the Oracle OCILobRead function.
+
+NOTE: DBD::Oracle post 1.46 will return undef for any read lob if the
+length specified in the ora_lob_read is 0. See RT 55028. This avoids
+the potential problem with empty lobs (created with empty_clob) which
+return a length of 0 from ora_lob_length and prior to 1.46 a call to
+ora_lob_read with a 0 length would segfault.
 
 =item ora_lob_write
 

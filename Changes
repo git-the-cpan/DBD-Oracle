@@ -1,5 +1,25 @@
 Revision history for DBD::Oracle
 
+1.47_00   2012-07-11
+
+  [BUG FIXES]
+
+  - fixed redeclaration of $len in 31lob.t - (Martin J, Evans)
+
+  - RT55028 - stop segfaulting when attempting to read empty lobs
+    (Martin J. Evans)
+
+  - RT69059 - Despite OCIPing being documented as added in 10.2 AIX
+    does not seem to have it in 10.2 leading to undefined symbol -
+    Martin J. Evans
+
+  [DOCUMENTATION]
+  - Promoted the troubleshooting for the different architectures to 
+    POD documents, for easier/prettier access.
+
+  - Added a troubleshooting entry for RT71819 - bound output
+    parameters may be returned in the wrong order (Martin J. Evans)
+
 1.46      2012-07-11
  - promote 1.45_00 to official release
 
