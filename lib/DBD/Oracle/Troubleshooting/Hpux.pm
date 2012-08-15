@@ -11,7 +11,7 @@ DBD::Oracle::Troubleshooting::Hpux - Tips and Hints to Troubleshoot DBD::Oracle 
 
 =head1 VERSION
 
-version 1.48
+version 1.50
 
 =head1 INTRODUCTION
 
