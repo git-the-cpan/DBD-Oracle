@@ -1144,7 +1144,7 @@ dbd_phs_in(dvoid *octxp, OCIBind *bindp, ub4 iter, ub4 index,
             /* MJE commented out as we are avoiding DBIS now but as this is
                an Oracle callback there is no way to pass something non
                OCI into this func.
-               
+
 			if (DBIS->debug >= 3 || dbd_verbose >= 3 )
 				PerlIO_printf(DBILOGFP, "		in  '%s' [%lu,%lu]: len %2lu, ind %d%s, value=%s\n",
 					phs->name, ul_t(iter), ul_t(index), ul_t(phs->alen), phs->indp,
@@ -1316,16 +1316,18 @@ taf_cbk(dvoid *svchp, dvoid *envhp, dvoid *fo_ctx,ub4 fo_type, ub4 fo_event )
 	PUSHMARK(SP);
 	XPUSHs(sv_2mortal(newSViv(fo_event)));
 	XPUSHs(sv_2mortal(newSViv(fo_type)));
+    XPUSHs(SvRV(cb->dbh_ref));
+
 	PUTBACK;
-	return_count = call_pv(cb->function, G_SCALAR);
+	return_count = call_sv(cb->function, G_SCALAR);
 
     SPAGAIN;
-    
+
     if (return_count != 1)
         croak("Expected one scalar back from taf handler");
 
     ret = POPi;
-    
+
 	switch (fo_event){
 
 		case OCI_FO_BEGIN:
@@ -1338,7 +1340,6 @@ taf_cbk(dvoid *svchp, dvoid *envhp, dvoid *fo_ctx,ub4 fo_type, ub4 fo_event )
 		case OCI_FO_ERROR:
 		{
             if (ret == OCI_FO_RETRY) {
-                sleep(cb->sleep);
                 return OCI_FO_RETRY;
             }
 			break;
@@ -1350,30 +1351,27 @@ taf_cbk(dvoid *svchp, dvoid *envhp, dvoid *fo_ctx,ub4 fo_type, ub4 fo_event )
 		}
 	}
     PUTBACK;
-    
+
 	return 0;
 }
 
 
 sb4
-reg_taf_callback( imp_dbh_t *imp_dbh)
+reg_taf_callback(SV *dbh, imp_dbh_t *imp_dbh)
 {
 	dTHX;
 	OCIFocbkStruct 	tafailover;
 	sword 			status;
-	taf_callback_t  *cb = NULL;
-/*allocate space for the callback */
-	Newz(1, cb, 1, taf_callback_t);
-	cb->function= (char*)safemalloc(strlen(imp_dbh->taf_function));
-	cb->sleep   = imp_dbh->taf_sleep;
-	strcpy((char *)cb->function,imp_dbh->taf_function);
+
+    imp_dbh->taf_ctx.function = imp_dbh->taf_function;
+    imp_dbh->taf_ctx.dbh_ref = newRV_inc(dbh);
 
 	if (dbd_verbose >= 5 ) {
   		PerlIO_printf(DBIc_LOGPIO(imp_dbh), " In reg_taf_callback\n");
 	}
 
 /* set the context up as a pointer to the taf callback struct*/
-	tafailover.fo_ctx = cb;
+	tafailover.fo_ctx = &imp_dbh->taf_ctx;
 	tafailover.callback_function = &taf_cbk;
 
 /* register the callback */

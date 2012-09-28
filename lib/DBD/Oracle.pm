@@ -12,7 +12,7 @@ my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 {
 package DBD::Oracle;
 {
-  $DBD::Oracle::VERSION = '1.50';
+  $DBD::Oracle::VERSION = '1.51_00';
 }
 BEGIN {
   $DBD::Oracle::AUTHORITY = 'cpan:PYTHIAN';
@@ -123,13 +123,8 @@ BEGIN {
 }
 
 
-{   package DBD::Oracle::dr;
-{
-  $DBD::Oracle::dr::VERSION = '1.50';
-}
-BEGIN {
-  $DBD::Oracle::dr::AUTHORITY = 'cpan:PYTHIAN';
-} # ====== DRIVER ======
+{   package                     # hide from PAUSE
+    DBD::Oracle::dr;            # ====== DRIVER ======
     use strict;
 
     my %dbnames = ();	# holds list of known databases (oratab + tnsnames)
@@ -328,13 +323,8 @@ BEGIN {
 }
 
 
-{   package DBD::Oracle::db;
-{
-  $DBD::Oracle::db::VERSION = '1.50';
-}
-BEGIN {
-  $DBD::Oracle::db::AUTHORITY = 'cpan:PYTHIAN';
-} # ====== DATABASE ======
+{   package                     # hide from PAUSE
+    DBD::Oracle::db;            # ====== DATABASE ======
     use strict;
     use DBI qw(:sql_types);
 
@@ -411,10 +401,7 @@ BEGIN {
                  ora_client_info	=> undef,
                  ora_client_identifier	=> undef,
                  ora_action		=> undef,
-                 ora_taf		=> undef,
                  ora_taf_function	=> undef,
-                 ora_taf_sleep		=> undef,
-
                  };
     }
 
@@ -675,6 +662,9 @@ SELECT *
          , 'FLOAT'    , tc.DATA_PRECISION
          , 'DATE'     , 19
          , 'VARCHAR2' , tc.CHAR_LENGTH
+         , 'CHAR'     , tc.CHAR_LENGTH
+         , 'NVARCHAR2', tc.CHAR_LENGTH
+         , 'NCHAR'    , tc.CHAR_LENGTH
          , tc.DATA_LENGTH
          )                   COLUMN_SIZE
        , decode( tc.DATA_TYPE
@@ -753,7 +743,7 @@ SQL
 	    }
 	}
 	$SQL .= " ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION\n";
-        
+
 
         # Since DATA_DEFAULT is a LONG, DEFAULT values longer than 80 chars will
         # throw an ORA-24345 by default; so we check if LongReadLen is set at
@@ -1057,13 +1047,8 @@ SQL
 }   # end of package DBD::Oracle::db
 
 
-{   package DBD::Oracle::st;
-{
-  $DBD::Oracle::st::VERSION = '1.50';
-}
-BEGIN {
-  $DBD::Oracle::st::AUTHORITY = 'cpan:PYTHIAN';
-} # ====== STATEMENT ======
+{   package                     # hide from PAUSE
+    DBD::Oracle::st;            # ====== STATEMENT ======
 
 
    sub bind_param_inout_array {
@@ -1134,19 +1119,19 @@ BEGIN {
        return $sth->set_err($DBI::stderr, "executing $tuple_count generated $err_count errors")
        	   if $err_count;
 
-       return wantarray 
+       return wantarray
                 ? ($tuple_count, defined $row_count ? $row_count : undef)
                 : $tuple_count;
 
     }
 
     sub private_attribute_info {
-        return { map { $_ => undef } qw/ 
-            ora_lengths 
-            ora_types 
+        return { map { $_ => undef } qw/
+            ora_lengths
+            ora_types
             ora_rowid
-            ora_est_row_width 
-            ora_type 
+            ora_est_row_width
+            ora_type
             ora_fail_over
         / };
    }
@@ -1164,7 +1149,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 =head1 VERSION
 
-version 1.50
+version 1.51_00
 
 =head1 SYNOPSIS
 
@@ -1377,9 +1362,9 @@ allows for clients to automatically reconnect to an instance in the
 event of a failure of the instance. The reconnect happens
 automatically from within the OCI (Oracle Call Interface) library.
 DBD::Oracle now supports a callback function that will fire when a TAF
-event takes place. The main use of the callback is to give your
-program the opportunity to inform the user that a failover is taking
-place.
+event takes place. You may use the callback to inform the
+user a failover is taking place or to setup the session again
+once the failover has succeeded.
 
 You will have to set up TAF on your instance before you can use this
 callback.  You can test your instance to see if you can use TAF
@@ -1387,7 +1372,11 @@ callback with
 
   $dbh->ora_can_taf();
 
-If you try to set up a callback without it being enabled DBD::Oracle will croak.
+If you try to set up a callback without it being enabled DBD::Oracle
+will croak.
+
+NOTE: Currently, you must enable TAF during DBI's connect. However
+once enabled you can change the TAF settings.
 
 It is outside the scope of this document to go through all of the
 possible TAF situations you might want to set up but here is a simple
@@ -1415,12 +1404,16 @@ attempts another event.
   #set up TAF on the connection
   # NOTE since DBD::Oracle uses call_pv you may need to pass a full
   # name space as the function e.g., 'main::handle_taf'
-  my $dbh = DBI->connect('dbi:Oracle:XE','hr','hr',{ora_taf=>1,ora_taf_sleep=>5,ora_taf_function=>'handle_taf'});
+  # NOTE from 1.49_00 ora_taf_function can accept a code ref as well
+  #      as a sub name as it now uses call_sv
+  my $dbh = DBI->connect('dbi:Oracle:XE', 'hr', 'hr',
+                         {ora_taf_function => 'main::handle_taf'});
 
   #create the perl TAF event function
 
   sub handle_taf {
-    my ($fo_event,$fo_type) = @_;
+    # NOTE from 1.49_00 the $dbh handle was passed to your callback
+    my ($fo_event,$fo_type, $dbh) = @_;
     if ($fo_event == OCI_FO_BEGIN){
 
       print " Instance Unavailable Please stand by!! \n";
@@ -1443,9 +1436,8 @@ attempts another event.
        print " Failed over user. Resuming services\n";
     }
     elsif ($fo_event == OCI_FO_ERROR){
-       print " Failover error Sleeping...\n";
-       # DBD::Oracle will sleep for ora_taf_sleep if you return OCI_FO_RETRY
-       # If you want to stop retrying just return 0
+       print " Failover error ...\n";
+       sleep 5;                 # sleep before having another go
        return OCI_FO_RETRY;
     }
     else {
@@ -1542,33 +1534,38 @@ variable.
 
 =head4 ora_taf
 
-If your Oracle instance has been configured to use TAF events you can
-enable the TAF callback by setting this option to any I<true> value.
+This attribute was removed in 1.49_00 as it was redundant. To
+enable TAF simply set L</ora_taf_function>.
 
 =head4 ora_taf_function
 
-The name of the Perl subroutine that will be called from OCI when a
-TAF event occurs. You must supply a perl function to use the callback
-and it will always receive two parameters, the failover event value
-and the failover type. Below is an example of a TAF function
+If your Oracle instance has been configured to use TAF events you can
+enable the TAF callback by setting this option.
+
+The name of the Perl subroutine (or a code ref from 1.49_00) that will
+be called from OCI when a TAF event occurs. You must supply a perl
+function to use the callback and it will always receive at least two
+parameters; the failover event value and the failover type. From
+1.49_00 the dbh is passed as the third argument. Below is an example
+of a TAF function
 
   sub taf_event{
-     my ($event, $type) = @_;
+     # NOTE from 1.49_00 the $dbh handle is passed to the callback
+     my ($event, $type, $dbh) = @_;
 
      print "My TAF event=$event\n";
      print "My TAF type=$type\n";
      return;
   }
 
-Note you'll probably have to use the full name space when setting the
-TAF function e.g., 'main::my_taf_function' and not just
-'my_taf_function'.
+Note if passing a sub name you will probably have to use the full name
+space when setting the TAF function e.g., 'main::my_taf_function' and
+not just 'my_taf_function'.
 
 =head4 ora_taf_sleep
 
-The amount of time in seconds DBD::Oracle will sleep between attempting
-successive failover events when the event is OCI_FO_ERROR and OCI_FO_RETRY
-is returned from the TAF handler.
+This attribute was removed in 1.49_00 as it was redundant. If you want
+to sleep between retries simple add a sleep to your callback sub.
 
 =head4 ora_session_mode
 
@@ -2246,7 +2243,7 @@ If true (the default), fetching retrieves the contents of the CLOB or
 BLOB column in most circumstances.  If false, fetching retrieves the
 Oracle "LOB Locator" of the CLOB or BLOB value.
 
-See L</LOBs and LONGs> for more details.
+See L</LOBS AND LONGS> for more details.
 
 See also the LOB tests in 05dbi.t of Oracle::OCI for examples
 of how to use LOB Locators.
@@ -2286,7 +2283,7 @@ only one mode is supported;
 
   OCI_STMT_SCROLLABLE_READONLY - make result set scrollable
 
-See L</Scrollable Cursors> for more details.
+See L</SCROLLABLE CURSORS> for more details.
 
 =item ora_prefetch_rows
 
@@ -2658,7 +2655,7 @@ Prepare Attribute 'ora_prefetch_memory'. Tweaking these values may yield improve
   $dbh->{RowCacheSize} = 100;
   $sth=$dbh->prepare($SQL,{ora_exe_mode=>OCI_STMT_SCROLLABLE_READONLY,ora_prefetch_memory=>10000});
 
-In the above example 10 rows will be prefetched up to a maximum of 10000 bytes of data.  The Oracle® Call Interface Programmer's Guide,
+In the above example 10 rows will be prefetched up to a maximum of 10000 bytes of data.  The Oracle Call Interface Programmer's Guide,
 suggests a good row cache value for a scrollable cursor is about 20% of expected size of the record set.
 
 The prefetch settings tell the DBD::Oracle to grab x rows (or x-bytes) when it needs to get new rows. This happens on the first
@@ -2800,13 +2797,13 @@ Additional values when DBD::Oracle was built using OCI 9.2 and later:
 
 See L</Binding Cursors> for the correct way to use ORA_RSET.
 
-See L</LOBs and LONGs> for how to use ORA_CLOB and ORA_BLOB.
+See L</LOBS AND LONGS> for how to use ORA_CLOB and ORA_BLOB.
 
 See L</SYS.DBMS_SQL datatypes> for ORA_VARCHAR2_TABLE, ORA_NUMBER_TABLE.
 
 See L</Data Interface for Persistent LOBs> for the correct way to use SQLT_CHR and SQLT_BIN.
 
-See L</Other Data Types> for more information.
+See L</OTHER DATA TYPES> for more information.
 
 See also L<DBI/Placeholders and Bind Values>.
 

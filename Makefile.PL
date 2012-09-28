@@ -1525,7 +1525,7 @@ sub find_headers {
     # compensate for case where final .0 isn't in the install directory name
     (my $client_version_trim = $client_version_full) =~ s/\.0$//;
 
-    my @try = (	# search the ORACLE_HOME we're using first
+    my @try = grep { -d $_ } (	# search the ORACLE_HOME we're using first
        # --- Traditional full-install locations
        "$OH/rdbms/public", # prefer public over others
        "$OH/rdbms",
@@ -1533,18 +1533,22 @@ sub find_headers {
        # --- Oracle SDK Instant Client locations
        "$OH/sdk/include",
        # --- Oracle RPM Instant Client locations
-       "/usr/include/oracle/$client_version_full/client", # Instant Client for RedHat FC4
-       "/usr/include/oracle/$client_version_trim/client", # Instant Client for RedHat FC4
-       "/include/oracle/$client_version_full/client", # Instant Client for RedHat FC3
-       "/include/oracle/$client_version_trim/client", # Instant Client for RedHat FC3
-       "/usr/include/oracle/$client_version/client", # Instant Client 11.1 and up
-       "/usr/include/oracle/$client_version/client64", # Instant Client 11.1 and up
-       "/usr/include/oracle/$client_version_trim/client64", # Instant Client 64
-       "/usr/include/oracle/$client_version_full/client64", # Instant Client 64
+       map { ( $_, $_."64"   ) }
+       map { ( $_, "/usr$_" ) }
+       map { "/include/oracle/$_/client" }
+       	$client_version,
+       	$client_version_trim,
+       	$client_version_full,
 
+       #"/include/oracle/$client_version_full/client",       # Instant Client for RedHat FC3
+       #"/include/oracle/$client_version_trim/client",       # Instant Client for RedHat FC3
+       #"/usr/include/oracle/$client_version/client64",      # Instant Client 11.1 and up
+       #"/usr/include/oracle/$client_version/client",        # Instant Client 11.1 and up
+       #"/usr/include/oracle/$client_version_full/client64", # Instant Client 64
+       #"/usr/include/oracle/$client_version_full/client",   # Instant Client for RedHat FC4
+       #"/usr/include/oracle/$client_version_trim/client64", # Instant Client 64
+       #"/usr/include/oracle/$client_version_trim/client",   # Instant Client for RedHat FC4
     );
-
-
 
    # Add /usr/include/oracle based on the oracle home location if oracle home is under
    # /usr/lib/oracle ( Linux RPM install ).  The 11g instant client reports
@@ -1749,21 +1753,9 @@ sub symbol_search {
     sub post_initialize {
 	my $self = shift;
 
-	if (-f "$Config{installprivlib}/DBD/Oraperl.pm"){ # very old now
-	    print "
-Please note: the Oraperl.pm installation location has changed.
-It was: $Config{installprivlib}/DBD/Oraperl.pm
-Is now: $Config{installprivlib}/Oraperl.pm
-You have an old copy which you should delete when installing this one.\n";
-	}
-
 	print "\nNote: \$ORACLE_HOME/lib must be added to your $need_ldlp_env environment variable\n",
 	      "before running \"make test\" and whenever DBD::Oracle is used.\n\n"
 	    if $need_ldlp_env && ($ENV{$need_ldlp_env}||'') !~ m:\Q$OH/lib\b:;
-
-	# Ensure Oraperl.pm and oraperl.ph are installed into top lib dir
-	$self->{PM}->{'Oraperl.pm'} = '$(INST_LIB)/Oraperl.pm';
-	$self->{PM}->{'oraperl.ph'} = '$(INST_LIB)/oraperl.ph';
 
 	eval {	# This chunk is for Oracle::OCI
 	    require Data::Dumper;
@@ -1809,10 +1801,10 @@ You have an old copy which you should delete when installing this one.\n";
 	my ($ldrp) = $self->{LD_RUN_PATH};
 	# remove redundant /lib or /usr/lib as it can cause problems
 	$ldrp =~ s!:(/usr)?/lib$!! if $ldrp;
-        # if it's empty then set it manually
-        #Lincoln: if pick the right library path
-        my $libdir = main::ora_libdir();
-        $ldrp ||= "$OH/$libdir:$OH/rdbms/$libdir";
+    # if it's empty then set it manually
+    #Lincoln: if pick the right library path
+    my $libdir = main::ora_libdir();
+    $ldrp ||= "$OH/$libdir:$OH/rdbms/$libdir";
 	$self->{LD_RUN_PATH} = $ldrp;
 
 	local($_) = $self->SUPER::const_loadlibs(@_);

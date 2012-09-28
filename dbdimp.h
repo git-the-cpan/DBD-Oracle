@@ -11,8 +11,8 @@
 typedef struct taf_callback_st taf_callback_t;
 
 struct taf_callback_st {
-	char *function; /*User supplied TAF functiomn*/
-	int  sleep;
+	SV   *function; /*User supplied TAF functiomn*/
+    SV   *dbh_ref;
 };
 
 typedef struct imp_fbh_st imp_fbh_t;
@@ -26,7 +26,6 @@ struct imp_drh_st {
 	SV *ora_cache;
 	SV *ora_cache_o;		/* for ora_open() cache override */
 };
-
 
 /* Define dbh implementor data structure */
 struct imp_dbh_st {
@@ -56,12 +55,9 @@ struct imp_dbh_st {
 	ub4			pool_max;
 	ub4			pool_incr;
 	char		*driver_name;/*driver name user defined*/
-	ub4			driver_namel;
 #endif
-	taf_callback_t  *taf_callback;
-    bool		using_taf; /*TAF stuff*/
-    char		*taf_function; /*User supplied TAF functiomn*/
-    int			taf_sleep;
+    SV          *taf_function; /*User supplied TAF functiomn*/
+    taf_callback_t taf_ctx;
     char		*client_info;  /*user defined*/
     ub4			client_infol;
 	char		*module_name; /*module user defined */
@@ -393,7 +389,7 @@ void fb_ary_free(fb_ary_t *fb_ary);
 void rs_array_init(imp_sth_t *imp_sth);
 
 ub4 ora_db_version _((SV *dbh, imp_dbh_t *imp_dbh));
-sb4 reg_taf_callback _((imp_dbh_t *imp_dbh));
+sb4 reg_taf_callback _((SV *dbh, imp_dbh_t *imp_dbh));
 
 /* These defines avoid name clashes for multiple statically linked DBD's	*/
 

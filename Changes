@@ -1,5 +1,66 @@
 Revision history for DBD::Oracle
 
+1.51_00   2012-09-28
+
+  [BUG FIXES]
+
+  - fix serious memory corruption in TAF support (Martin J. Evans)
+
+  - fix finding client in situation where client and server both
+    installed but different architectures (patch by H.Merijn Brand)
+
+  - fix memory leak in TAF handling - the TAF function was leaked
+    (Martin J. Evans)
+
+  - fix issue with taf_function being set to a scalar which goes
+    out of scope before the callback is made (Martin J. Evans)
+
+  - fix RT46739 if a connection breaks the environment handle is
+    not thrown away (Martin J. Evans)
+
+  - ora_driver_name was not defaulted to the correct DBD::Oracle
+    version (Martin J. Evans)
+
+  - ora_driver_name, ora_client_info, ora_client_identifier,
+    ora_action and ora_oci_success_warn were set twice (if specified)
+    on connect as they were not deleted from the connect attributes
+    once handled. Code now leaves the setting to the later STORE DBI
+    calls (Martin J. Evans)
+
+  - fixed some compiler warnings for %lf (Martin J. Evans)
+
+  - fixed RT78700 - column_info reports wrong size for char semantic
+    char type columns (Douglas Wilson).
+
+  [CHANGE IN BEHAVIOUR]
+
+  - ora_taf and ora_taf_sleep were redundant and have been removed.
+    To enable/disable TAF simply set ora_taf_function and if you
+    want to sleep do it in your callback (Martin J. Evans)
+
+  - ora_taf_function can now be a code reference as well as a string
+    (Martin J. Evans)
+
+  [ENHANCEMENTS]
+
+  - the ora_can_taf method was virtually useless since you can only
+    call it after connecting and to enable TAF you had to do it in the
+    connect call. Now you can enable and disable TAF at any time by
+    simply setting or clearing the ora_taf_function (see RT78811)
+    (Martin J. Evans)
+
+  - the ora_taf_function is now passed a third argument of the
+    connection handle (Martin J. Evans)
+
+  - RT78987 - removed Oraperl.pm and oraperl.ph; these files will be
+    available in a separate distribution named "Oraperl" (David Perry)
+
+  [MISCELLANEOUS]
+
+  - hide dr, db and st packages from PAUSE (Martin J. Evans)
+
+  - added a few more simple TAF tests (Martin J. Evans)
+
 1.50      2012-08-15
  - RT78965 - Remove Oraperl tests (which were forcing a require on Oraperl)
 
@@ -20,7 +81,7 @@ Revision history for DBD::Oracle
     Martin J. Evans
 
   [DOCUMENTATION]
-  - Promoted the troubleshooting for the different architectures to 
+  - Promoted the troubleshooting for the different architectures to
     POD documents, for easier/prettier access.
 
   - Added a troubleshooting entry for RT71819 - bound output

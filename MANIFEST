@@ -7,9 +7,9 @@ META.yml
 Makefile.PL
 Oracle.h
 Oracle.xs
-Oraperl.pm
 README
 README.help.txt
+README.mkdn
 Todo
 dbdimp.c
 dbdimp.h
@@ -39,7 +39,7 @@ lib/DBD/Oracle/Object.pm
 lib/DBD/Oracle/Troubleshooting.pod
 lib/DBD/Oracle/Troubleshooting/Aix.pod
 lib/DBD/Oracle/Troubleshooting/Cygwin.pod
-lib/DBD/Oracle/Troubleshooting/Hpux.pm
+lib/DBD/Oracle/Troubleshooting/Hpux.pod
 lib/DBD/Oracle/Troubleshooting/Linux.pod
 lib/DBD/Oracle/Troubleshooting/Macos.pod
 lib/DBD/Oracle/Troubleshooting/Sun.pod
@@ -50,7 +50,6 @@ mkta.pl
 oci.def
 oci8.c
 ocitrace.h
-oraperl.ph
 t/000-report-versions.t
 t/00versions.t
 t/01base.t
@@ -76,6 +75,7 @@ t/32xmltype.t
 t/34pres_lobs.t
 t/36lob_leak.t
 t/38taf.t
+t/39attr.t
 t/40ph_type.t
 t/50cursor.t
 t/51scroll.t
