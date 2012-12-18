@@ -12,7 +12,7 @@ my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 {
 package DBD::Oracle;
 {
-  $DBD::Oracle::VERSION = '1.52';
+  $DBD::Oracle::VERSION = '1.53_00';
 }
 BEGIN {
   $DBD::Oracle::AUTHORITY = 'cpan:PYTHIAN';
@@ -606,8 +606,9 @@ SQL
 	my $dbh  = shift;
 	my $attr = ( ref $_[0] eq 'HASH') ? $_[0] : {
 	    'TABLE_SCHEM' => $_[1],'TABLE_NAME' => $_[2],'COLUMN_NAME' => $_[3] };
+	my $ora_server_version = ora_server_version($dbh);
 	my($typecase,$typecaseend) = ('','');
-	if (ora_server_version($dbh)->[0] >= 8) {
+	if ($ora_server_version->[0] >= 8) {
 	    $typecase = <<'SQL';
 CASE WHEN tc.DATA_TYPE LIKE 'TIMESTAMP% WITH% TIME ZONE' THEN 95
      WHEN tc.DATA_TYPE LIKE 'TIMESTAMP%'                 THEN 93
@@ -617,6 +618,7 @@ ELSE
 SQL
 	    $typecaseend = 'END';
 	}
+  my $char_length = $ora_server_version->[0] < 9 ? 'DATA_LENGTH':'CHAR_LENGTH';
 	my $SQL = <<"SQL";
 SELECT *
   FROM
@@ -661,10 +663,10 @@ SELECT *
                         )
          , 'FLOAT'    , tc.DATA_PRECISION
          , 'DATE'     , 19
-         , 'VARCHAR2' , tc.CHAR_LENGTH
-         , 'CHAR'     , tc.CHAR_LENGTH
-         , 'NVARCHAR2', tc.CHAR_LENGTH
-         , 'NCHAR'    , tc.CHAR_LENGTH
+         , 'VARCHAR2' , tc.$char_length
+         , 'CHAR'     , tc.$char_length
+         , 'NVARCHAR2', tc.$char_length
+         , 'NCHAR'    , tc.$char_length
          , tc.DATA_LENGTH
          )                   COLUMN_SIZE
        , decode( tc.DATA_TYPE
@@ -982,30 +984,29 @@ SQL
     }
 
     sub dbms_msgpipe_ack {
-	my $dbh = shift;
-	my $msg = shift;
-	my $sth = $dbh->prepare_cached(q{
-	    begin dbms_msgpipe.acknowledge(:returnpipe, :errormsg, :param); end;
-	}) or return;
-	$sth->bind_param_inout(":returnpipe", \$msg->[0],   30);
-	$sth->bind_param_inout(":proc",       \$msg->[1],   30);
-	$sth->bind_param_inout(":param",      \$msg->[2], 4000);
-	$sth->execute or return undef;
-	return 1;
+        my $dbh = shift;
+        my $msg = shift;
+        my $sth = $dbh->prepare_cached(q{
+	    begin dbms_msgpipe.acknowledge(:returnpipe, :errormsg, :param); end;}) or return;
+        $sth->bind_param_inout(":returnpipe", \$msg->[0],   30);
+        $sth->bind_param_inout(":proc",       \$msg->[1],   30);
+        $sth->bind_param_inout(":param",      \$msg->[2], 4000);
+        $sth->execute or return undef;
+        return 1;
     }
 
     sub ora_server_version {
-	my $dbh = shift;
-	return $dbh->{ora_server_version} if defined $dbh->{ora_server_version};
-	my $banner = $dbh->selectrow_array(<<'SQL', undef, 'Oracle%', 'Personal Oracle%');
+        my $dbh = shift;
+        return $dbh->{ora_server_version} if defined $dbh->{ora_server_version};
+        my $banner = $dbh->selectrow_array(<<'SQL', undef, 'Oracle%', 'Personal Oracle%');
 SELECT banner
   FROM v$version
   WHERE banner LIKE ? OR banner LIKE ?
 SQL
-	if (defined $banner) {
-	    my @version = $banner =~ /(?:^|\s)(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)(?:\s|$)/;
-	    $dbh->{ora_server_version} = \@version if @version;
-	}
+        if (defined $banner) {
+            my @version = $banner =~ /(?:^|\s)(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)(?:\s|$)/;
+            $dbh->{ora_server_version} = \@version if @version;
+        }
     }
 
     sub ora_nls_parameters {
@@ -1076,7 +1077,7 @@ SQL
     sub execute_for_fetch {
        my ($sth, $fetch_tuple_sub, $tuple_status) = @_;
        my $row_count = 0;
-       my $err_count = 0;
+       my $err_total = 0;
        my $tuple_count="0E0";
        my $tuple_batch_status;
        my $dbh = $sth->{Database};
@@ -1096,6 +1097,7 @@ SQL
            }
            last unless @tuple_batch;
 
+           my $err_count = 0;
            my $res = ora_execute_array($sth,
                                            \@tuple_batch,
                                            scalar(@tuple_batch),
@@ -1108,7 +1110,9 @@ SQL
                 $row_count = undef;
            }
 
-           $tuple_count+=@$tuple_batch_status;
+           $err_total += $err_count;
+
+           $tuple_count+=@tuple_batch;
            push @$tuple_status, @$tuple_batch_status
                 if defined($tuple_status);
 
@@ -1116,8 +1120,8 @@ SQL
 
        }
        #error check here
-       return $sth->set_err($DBI::stderr, "executing $tuple_count generated $err_count errors")
-       	   if $err_count;
+       return $sth->set_err($DBI::stderr, "executing $tuple_count generated $err_total errors")
+       	   if $err_total;
 
        return wantarray
                 ? ($tuple_count, defined $row_count ? $row_count : undef)
@@ -1149,7 +1153,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 =head1 VERSION
 
-version 1.52
+version 1.53_00
 
 =head1 SYNOPSIS
 
@@ -2192,6 +2196,16 @@ Returns true if the current connection supports TAF events. False if otherise.
 Returns a hash reference containing the current NLS parameters, as given
 by the v$nls_parameters view. The values fetched are cached between calls.
 To cause the latest values to be fetched, pass a true value to the function.
+
+=head1 ORACLE-SPECIFIC DATABASE FUNCTIONS
+
+=head2 B<ora_server_version>
+
+  $versions = $dbh->func('ora_server_version');
+
+Returns an array reference of server version strings e.g.,
+
+  [11,2,0,2,0]
 
 =head1 DATABASE HANDLE METHODS
 
@@ -5329,8 +5343,6 @@ you may not be aware of.
 
 A git mirror of the subversion is also available at
 `https://github.com/yanick/DBD-Oracle`.
-
-=head1 Oracle Related Links
 
 =head1 WHICH VERSION OF DBD::ORACLE IS FOR ME?
 

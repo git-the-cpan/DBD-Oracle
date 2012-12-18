@@ -50,7 +50,7 @@ mkta.pl
 oci.def
 oci8.c
 ocitrace.h
-t/000-report-versions.t
+t/000-report-versions-tiny.t
 t/00versions.t
 t/01base.t
 t/10general.t
@@ -85,6 +85,7 @@ t/58object.t
 t/60reauth.t
 t/70meta.t
 t/80ora_charset.t
+t/lib/ExecuteArray.pm
 t/nchar_test_lib.pl
 t/rt13865.t
 t/rt74753-utf8-encoded.t
