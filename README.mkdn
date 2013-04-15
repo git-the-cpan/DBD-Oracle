@@ -4,7 +4,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 # VERSION
 
-version 1.60
+version 1.61\_00
 
 # SYNOPSIS
 
@@ -4280,7 +4280,7 @@ redistribute it and/or modify it under the same terms as Perl 5.
 # AUTHORS
 
 - Tim Bunce <timb@cpan.org>
-- John Scoles
+- John Scoles <byterock@cpan.org>
 - Yanick Champoux <yanick@cpan.org>
 - Martin J. Evans <mjevans@cpan.org>
 

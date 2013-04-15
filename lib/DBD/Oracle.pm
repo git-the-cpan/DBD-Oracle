@@ -12,7 +12,7 @@ my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 {
 package DBD::Oracle;
 {
-  $DBD::Oracle::VERSION = '1.60';
+  $DBD::Oracle::VERSION = '1.61_00';
 }
 BEGIN {
   $DBD::Oracle::AUTHORITY = 'cpan:PYTHIAN';
@@ -1153,7 +1153,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 =head1 VERSION
 
-version 1.60
+version 1.61_00
 
 =head1 SYNOPSIS
 
@@ -5507,7 +5507,7 @@ Tim Bunce <timb@cpan.org>
 
 =item *
 
-John Scoles
+John Scoles <byterock@cpan.org>
 
 =item *
 

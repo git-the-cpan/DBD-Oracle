@@ -11,7 +11,7 @@ DBD::Oracle::Troubleshooting::Hpux - Tips and Hints to Troubleshoot DBD::Oracle 
 
 =head1 VERSION
 
-version 1.60
+version 1.61_00
 
 =head1 INTRODUCTION
 
@@ -1004,7 +1004,7 @@ Tim Bunce <timb@cpan.org>
 
 =item *
 
-John Scoles
+John Scoles <byterock@cpan.org>
 
 =item *
 

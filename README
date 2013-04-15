@@ -2,7 +2,7 @@ NAME
     DBD::Oracle - Oracle database driver for the DBI module
 
 VERSION
-    version 1.60
+    version 1.61_00
 
 SYNOPSIS
       use DBI;
@@ -4247,7 +4247,7 @@ COPYRIGHT
 AUTHORS
     *   Tim Bunce <timb@cpan.org>
 
-    *   John Scoles
+    *   John Scoles <byterock@cpan.org>
 
     *   Yanick Champoux <yanick@cpan.org>
 
