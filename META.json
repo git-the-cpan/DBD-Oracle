@@ -56,18 +56,18 @@
    "provides" : {
       "DBD::Oracle" : {
          "file" : "lib/DBD/Oracle.pm",
-         "version" : "1.61_00"
+         "version" : "1.62"
       },
       "DBD::Oracle::GetInfo" : {
          "file" : "lib/DBD/Oracle/GetInfo.pm",
-         "version" : "1.61_00"
+         "version" : "1.62"
       },
       "DBD::Oracle::Object" : {
          "file" : "lib/DBD/Oracle/Object.pm",
-         "version" : "1.61_00"
+         "version" : "1.62"
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
          "mailto" : "bug-dbd-oracle at rt.cpan.org",
@@ -80,13 +80,14 @@
          "web" : "https://github.com/pythian/DBD-Oracle"
       }
    },
-   "version" : "1.61_00",
+   "version" : "1.62",
    "x_authority" : "cpan:PYTHIAN",
    "x_contributors" : [
       "David E. Wheeler <david@justatheory.com>",
       "David Perry <perry@pythian.com>",
       "Gwen Shapira <shapira@pythian.com>",
       "Joe Crotty <joe.crotty@returnpath.net>",
+      "Michael Portnoy <portnoy@pythian.com>",
       "StephenCIQG <StephenCIQG@50811bd7-b8ce-0310-adc1-d9db26280581>",
       "cjardine <cjardine@50811bd7-b8ce-0310-adc1-d9db26280581>",
       "jurl <jurl@50811bd7-b8ce-0310-adc1-d9db26280581>",
