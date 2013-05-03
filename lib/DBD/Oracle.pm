@@ -12,7 +12,7 @@ my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 {
 package DBD::Oracle;
 {
-  $DBD::Oracle::VERSION = '1.62';
+  $DBD::Oracle::VERSION = '1.63_00';
 }
 BEGIN {
   $DBD::Oracle::AUTHORITY = 'cpan:PYTHIAN';
@@ -304,7 +304,7 @@ BEGIN {
 	unless (length $user_only) {
 	    $user_only = $dbh->selectrow_array(q{
 		SELECT SYS_CONTEXT('userenv','session_user') FROM DUAL
-	    });
+	    })||'';
 	    $dbh_inner->{Username} = $user_only;
 	    # these two are just for backwards compatibility
 	    $dbh_inner->{USER} = $dbh_inner->{CURRENT_USER} = uc $user_only;
@@ -1153,7 +1153,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 =head1 VERSION
 
-version 1.62
+version 1.63_00
 
 =head1 SYNOPSIS
 

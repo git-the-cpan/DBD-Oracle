@@ -1,5 +1,20 @@
 Revision history for DBD::Oracle
 
+1.63_00   2013-05-03
+
+  [ENHANCEMENTS]
+  - DBD-Oracle: Use of uninitialized value $user_only in uc [RT#84657]
+    (Steffen Goeldner)  
+
+  [BUG FIXES]
+  - Make 50cursor.t Oracle8-friendly. (RT#84660, patch by Steffen Goeldner)
+  - Makefile.PL's use of ACL tweaked for Suse Enterprise 11 SP2
+        (RT#84530, patch by Alfred Nathaniel)
+
+  [DOCUMENTATION]
+  - Bogus 227 directory no longer required for MacOS. (GH#1, patch
+    by theory)
+
 1.62      2013-04-30
   - promote 1.61_00 to official release
 
