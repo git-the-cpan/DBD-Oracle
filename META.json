@@ -56,18 +56,18 @@
    "provides" : {
       "DBD::Oracle" : {
          "file" : "lib/DBD/Oracle.pm",
-         "version" : "1.63_00"
+         "version" : "1.64"
       },
       "DBD::Oracle::GetInfo" : {
          "file" : "lib/DBD/Oracle/GetInfo.pm",
-         "version" : "1.63_00"
+         "version" : "1.64"
       },
       "DBD::Oracle::Object" : {
          "file" : "lib/DBD/Oracle/Object.pm",
-         "version" : "1.63_00"
+         "version" : "1.64"
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
          "mailto" : "bug-dbd-oracle at rt.cpan.org",
@@ -80,7 +80,7 @@
          "web" : "https://github.com/pythian/DBD-Oracle"
       }
    },
-   "version" : "1.63_00",
+   "version" : "1.64",
    "x_authority" : "cpan:PYTHIAN",
    "x_contributors" : [
       "David E. Wheeler <david@justatheory.com>",
