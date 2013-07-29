@@ -12,7 +12,7 @@ my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 {
 package DBD::Oracle;
 {
-  $DBD::Oracle::VERSION = '1.64';
+  $DBD::Oracle::VERSION = '1.65_00';
 }
 BEGIN {
   $DBD::Oracle::AUTHORITY = 'cpan:PYTHIAN';
@@ -23,6 +23,9 @@ BEGIN {
     use DynaLoader ();
     use Exporter ();
     use DBD::Oracle::Object();
+
+    # for dev version
+    $DBD::Oracle::VERSION ||= '1.00';
 
     @ISA = qw(DynaLoader Exporter);
     %EXPORT_TAGS = (
@@ -50,7 +53,7 @@ BEGIN {
 
     require_version DBI 1.51;
 
-    bootstrap DBD::Oracle $VERSION;
+    DBD::Oracle->bootstrap($DBD::Oracle::VERSION);
 
     $drh = undef;	# holds driver handle once initialized
 
@@ -1153,7 +1156,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 =head1 VERSION
 
-version 1.64
+version 1.65_00
 
 =head1 SYNOPSIS
 
@@ -2189,7 +2192,7 @@ $refresh parameter to it.
 
 =head2 B<ora_can_taf>
 
-Returns true if the current connection supports TAF events. False if otherise.
+Returns true if the current connection supports TAF events. False if otherwise.
 
 =head2 B<ora_nls_parameters ( [ $refresh ] )>
 
@@ -3266,7 +3269,7 @@ a reference to a list. Do not use this in a scalar context.
   $hash_ref = $sth->fetchrow_hashref($name);
 
 Fetches the next row of data and returns a hashref containing the name of the columns as the keys
-and the data itself as the values. Any NULL value is returned as as undef value.
+and the data itself as the values. Any NULL value is returned as undef value.
 
 If there are no more rows or if an error occurs, the this method return undef. You should
 check C<< $sth->err >> afterwards (or use the L</RaiseError> attribute) to discover if the undef returned

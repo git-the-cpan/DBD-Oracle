@@ -48,8 +48,8 @@ sub pmver {
     return sprintf('%-45s => %-10s%-15s%s', $module, $pmver, $wanted, "\n");
 }
 
+eval { $v .= pmver('B','any version') };
 eval { $v .= pmver('Carp','any version') };
-eval { $v .= pmver('Config','any version') };
 eval { $v .= pmver('DBI','1.51') };
 eval { $v .= pmver('Data::Dumper','any version') };
 eval { $v .= pmver('Devel::Peek','any version') };
@@ -60,6 +60,7 @@ eval { $v .= pmver('ExtUtils::MakeMaker','6.30') };
 eval { $v .= pmver('Math::BigInt','any version') };
 eval { $v .= pmver('Test::More','0.88') };
 eval { $v .= pmver('Thread::Semaphore','any version') };
+eval { $v .= pmver('lib','any version') };
 eval { $v .= pmver('strict','any version') };
 eval { $v .= pmver('utf8','any version') };
 eval { $v .= pmver('vars','any version') };

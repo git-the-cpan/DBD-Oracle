@@ -2,7 +2,7 @@ NAME
     DBD::Oracle - Oracle database driver for the DBI module
 
 VERSION
-    version 1.64
+    version 1.65_00
 
 SYNOPSIS
       use DBI;
@@ -955,7 +955,7 @@ ORACLE-SPECIFIC DATABASE HANDLE METHODS
 
   ora_can_taf
     Returns true if the current connection supports TAF events. False if
-    otherise.
+    otherwise.
 
   ora_nls_parameters ( [ $refresh ] )
     Returns a hash reference containing the current NLS parameters, as given
@@ -1990,7 +1990,7 @@ DBI STATEMENT HANDLE OBJECT METHODS
 
     Fetches the next row of data and returns a hashref containing the name
     of the columns as the keys and the data itself as the values. Any NULL
-    value is returned as as undef value.
+    value is returned as undef value.
 
     If there are no more rows or if an error occurs, the this method return
     undef. You should check "$sth->err" afterwards (or use the "RaiseError"

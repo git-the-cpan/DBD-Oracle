@@ -4,7 +4,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 # VERSION
 
-version 1.64
+version 1.65\_00
 
 # SYNOPSIS
 
@@ -32,60 +32,60 @@ consult the [DBI](http://search.cpan.org/perldoc?DBI) documentation first!
 
 - :ora\_session\_modes
 
-ORA\_SYSDBA ORA\_SYSOPER ORA\_SYSASM
+    ORA\_SYSDBA ORA\_SYSOPER ORA\_SYSASM
 
 - :ora\_types
 
-    ORA_VARCHAR2 ORA_STRING ORA_NUMBER ORA_LONG ORA_ROWID ORA_DATE ORA_RAW
-    ORA_LONGRAW ORA_CHAR ORA_CHARZ ORA_MLSLABEL ORA_XMLTYPE ORA_CLOB ORA_BLOB
-    ORA_RSET ORA_VARCHAR2_TABLE ORA_NUMBER_TABLE SQLT_INT SQLT_FLT ORA_OCI
-    SQLT_CHR SQLT_BIN
+        ORA_VARCHAR2 ORA_STRING ORA_NUMBER ORA_LONG ORA_ROWID ORA_DATE ORA_RAW
+        ORA_LONGRAW ORA_CHAR ORA_CHARZ ORA_MLSLABEL ORA_XMLTYPE ORA_CLOB ORA_BLOB
+        ORA_RSET ORA_VARCHAR2_TABLE ORA_NUMBER_TABLE SQLT_INT SQLT_FLT ORA_OCI
+        SQLT_CHR SQLT_BIN
 - SQLCS\_IMPLICIT
 - SQLCS\_NCHAR
 
-SQLCS\_IMPLICIT and SQLCS\_NCHAR are _character set form_ values.
-See notes about Unicode elsewhere in this document.
+    SQLCS\_IMPLICIT and SQLCS\_NCHAR are _character set form_ values.
+    See notes about Unicode elsewhere in this document.
 
 - SQLT\_INT
 - SQLT\_FLT
 
-These types are used only internally, and may be specified as internal
-bind type for ORA\_NUMBER\_TABLE. See notes about ORA\_NUMBER\_TABLE elsewhere
-in this document
+    These types are used only internally, and may be specified as internal
+    bind type for ORA\_NUMBER\_TABLE. See notes about ORA\_NUMBER\_TABLE elsewhere
+    in this document
 
 - ORA\_OCI
 
-Oracle doesn't provide a formal API for determining the exact version
-number of the OCI client library used, so DBD::Oracle has to go digging
-(and sometimes has to more or less guess).  The ORA\_OCI constant
-holds the result of that process.
+    Oracle doesn't provide a formal API for determining the exact version
+    number of the OCI client library used, so DBD::Oracle has to go digging
+    (and sometimes has to more or less guess).  The ORA\_OCI constant
+    holds the result of that process.
 
-In string context ORA\_OCI returns the full "A.B.C.D" version string.
+    In string context ORA\_OCI returns the full "A.B.C.D" version string.
 
-In numeric context ORA\_OCI returns the major.minor version number
-(8.1, 9.2, 10.0 etc).  But note that version numbers are not actually
-floating point and so if Oracle ever makes a release that has a two
-digit minor version, such as `9.10` it will have a lower numeric
-value than the preceding `9.9` release. So use with care.
+    In numeric context ORA\_OCI returns the major.minor version number
+    (8.1, 9.2, 10.0 etc).  But note that version numbers are not actually
+    floating point and so if Oracle ever makes a release that has a two
+    digit minor version, such as `9.10` it will have a lower numeric
+    value than the preceding `9.9` release. So use with care.
 
-The contents and format of ORA\_OCI are subject to change (it may,
-for example, become a _version object_ in later releases).
-I recommend that you avoid checking for exact values.
+    The contents and format of ORA\_OCI are subject to change (it may,
+    for example, become a _version object_ in later releases).
+    I recommend that you avoid checking for exact values.
 
 - :ora\_fetch\_orient
 
-    OCI_FETCH_CURRENT OCI_FETCH_NEXT OCI_FETCH_FIRST OCI_FETCH_LAST
-    OCI_FETCH_PRIOR OCI_FETCH_ABSOLUTE OCI_FETCH_RELATIVE
+        OCI_FETCH_CURRENT OCI_FETCH_NEXT OCI_FETCH_FIRST OCI_FETCH_LAST
+        OCI_FETCH_PRIOR OCI_FETCH_ABSOLUTE OCI_FETCH_RELATIVE
 
-These constants are used to set the orientation of a fetch on a scrollable cursor.
+    These constants are used to set the orientation of a fetch on a scrollable cursor.
 
 - :ora\_exe\_modes
 
-    OCI_STMT_SCROLLABLE_READONLY
+        OCI_STMT_SCROLLABLE_READONLY
 - :ora\_fail\_over
 
-    OCI_FO_END OCI_FO_ABORT OCI_FO_REAUTH OCI_FO_BEGIN OCI_FO_ERROR
-    OCI_FO_NONE OCI_FO_SESSION OCI_FO_SELECT OCI_FO_TXNAL OCI_FO_RETRY
+        OCI_FO_END OCI_FO_ABORT OCI_FO_REAUTH OCI_FO_BEGIN OCI_FO_ERROR
+        OCI_FO_NONE OCI_FO_SESSION OCI_FO_SELECT OCI_FO_TXNAL OCI_FO_RETRY
 
 # DBI CLASS METHODS
 
@@ -99,16 +99,16 @@ There are several ways to identify a database:
 
 - 1
 
-If the database is local, specifying the SID or service name will be enough.
+    If the database is local, specifying the SID or service name will be enough.
 
 - 2
 
-If the database is defined in a TNSNAMES.ORA file, you can use the service name given in the file
+    If the database is defined in a TNSNAMES.ORA file, you can use the service name given in the file
 
 - 3
 
-To connect without TNSNAMES.ORA file, you can use an EZCONNECT url, of the form:
-//host\[:port\]\[/service\_name\]
+    To connect without TNSNAMES.ORA file, you can use an EZCONNECT url, of the form:
+    //host\[:port\]\[/service\_name\]
 
 If port name is not specified, 1521 is the default. If service name is not specified, the hostname will be used as a service name.
 
@@ -586,11 +586,11 @@ Use this value to enable extended embedded oracle objects mode. In extended:
 
 - 1
 
-Embedded objects are returned as <DBD::Oracle::Object> instance (including type-name etc.) instead of simple ARRAY.
+    Embedded objects are returned as <DBD::Oracle::Object> instance (including type-name etc.) instead of simple ARRAY.
 
 - 2
 
-Determine object type for each instance. All object attributes are returned (not only super-type's attributes).
+    Determine object type for each instance. All object attributes are returned (not only super-type's attributes).
 
     $dbh->{ora_objects} = 1;
 
@@ -610,29 +610,29 @@ Only the following values are permitted for this attribute.
 
 - ORA\_VARCHAR2
 
-Oracle clients using OCI 8 will strip trailing spaces and allow embedded \\0 bytes.
-Oracle clients using OCI 9.2 do not strip trailing spaces and allow embedded \\0 bytes.
-This is the normal default placeholder type.
+    Oracle clients using OCI 8 will strip trailing spaces and allow embedded \\0 bytes.
+    Oracle clients using OCI 9.2 do not strip trailing spaces and allow embedded \\0 bytes.
+    This is the normal default placeholder type.
 
 - ORA\_STRING
 
-Do not strip trailing spaces and end the string at the first \\0.
+    Do not strip trailing spaces and end the string at the first \\0.
 
 - ORA\_CHAR
 
-Do not strip trailing spaces and allow embedded \\0.
-Force 'blank-padded comparison semantics'.
+    Do not strip trailing spaces and allow embedded \\0.
+    Force 'blank-padded comparison semantics'.
 
-For example:
+    For example:
 
-    use DBD::Oracle qw(:ora_types);
+        use DBD::Oracle qw(:ora_types);
 
-    $SQL="select username from all_users where username = ?";
-    #username is a char(8)
-    $sth=$dbh->prepare($SQL)";
-    $sth->bind_param(1,'bloggs',{ ora_type => ORA_CHAR});
+        $SQL="select username from all_users where username = ?";
+        #username is a char(8)
+        $sth=$dbh->prepare($SQL)";
+        $sth->bind_param(1,'bloggs',{ ora_type => ORA_CHAR});
 
-Will pad bloggs out to 8 characters and return the username.
+    Will pad bloggs out to 8 characters and return the username.
 
 #### ora\_parse\_error\_offset
 
@@ -1020,7 +1020,7 @@ $refresh parameter to it.
 
 ## __ora\_can\_taf__
 
-Returns true if the current connection supports TAF events. False if otherise.
+Returns true if the current connection supports TAF events. False if otherwise.
 
 ## __ora\_nls\_parameters ( \[ $refresh \] )__
 
@@ -1077,72 +1077,72 @@ These attributes may be used in the `\%attr` parameter of the
 
 - ora\_placeholders
 
-Set to false to disable processing of placeholders. Used mainly for loading a
-PL/SQL package that has been _wrapped_ with Oracle's `wrap` utility.
+    Set to false to disable processing of placeholders. Used mainly for loading a
+    PL/SQL package that has been _wrapped_ with Oracle's `wrap` utility.
 
 - ora\_auto\_lob
 
-If true (the default), fetching retrieves the contents of the CLOB or
-BLOB column in most circumstances.  If false, fetching retrieves the
-Oracle "LOB Locator" of the CLOB or BLOB value.
+    If true (the default), fetching retrieves the contents of the CLOB or
+    BLOB column in most circumstances.  If false, fetching retrieves the
+    Oracle "LOB Locator" of the CLOB or BLOB value.
 
-See ["LOBS AND LONGS"](#LOBS AND LONGS) for more details.
+    See ["LOBS AND LONGS"](#LOBS AND LONGS) for more details.
 
-See also the LOB tests in 05dbi.t of Oracle::OCI for examples
-of how to use LOB Locators.
+    See also the LOB tests in 05dbi.t of Oracle::OCI for examples
+    of how to use LOB Locators.
 
 - ora\_pers\_lob
 
-If true the ["Simple Fetch for CLOBs and BLOBs"](#Simple Fetch for CLOBs and BLOBs) method for the ["Data Interface for Persistent LOBs"](#Data Interface for Persistent LOBs) will be
-used for LOBs rather than the default method ["Data Interface for LOB Locators"](#Data Interface for LOB Locators).
+    If true the ["Simple Fetch for CLOBs and BLOBs"](#Simple Fetch for CLOBs and BLOBs) method for the ["Data Interface for Persistent LOBs"](#Data Interface for Persistent LOBs) will be
+    used for LOBs rather than the default method ["Data Interface for LOB Locators"](#Data Interface for LOB Locators).
 
 - ora\_clbk\_lob
 
-If true the ["Piecewise Fetch with Callback"](#Piecewise Fetch with Callback) method for the ["Data Interface for Persistent LOBs"](#Data Interface for Persistent LOBs) will be used for LOBs.
+    If true the ["Piecewise Fetch with Callback"](#Piecewise Fetch with Callback) method for the ["Data Interface for Persistent LOBs"](#Data Interface for Persistent LOBs) will be used for LOBs.
 
 - ora\_piece\_lob
 
-If true the ["Piecewise Fetch with Polling"](#Piecewise Fetch with Polling) method for the ["Data Interface for Persistent LOBs"](#Data Interface for Persistent LOBs) will be used for LOBs.
+    If true the ["Piecewise Fetch with Polling"](#Piecewise Fetch with Polling) method for the ["Data Interface for Persistent LOBs"](#Data Interface for Persistent LOBs) will be used for LOBs.
 
 - ora\_piece\_size
 
-This is the max piece size for the ["Piecewise Fetch with Callback"](#Piecewise Fetch with Callback)
-and ["Piecewise Fetch with Polling"](#Piecewise Fetch with Polling) methods, in chars for CLOBS, and
-bytes for BLOBS.
+    This is the max piece size for the ["Piecewise Fetch with Callback"](#Piecewise Fetch with Callback)
+    and ["Piecewise Fetch with Polling"](#Piecewise Fetch with Polling) methods, in chars for CLOBS, and
+    bytes for BLOBS.
 
 - ora\_check\_sql
 
-If 1 (default), force SELECT statements to be described in prepare().
-If 0, allow SELECT statements to defer describe until execute().
+    If 1 (default), force SELECT statements to be described in prepare().
+    If 0, allow SELECT statements to defer describe until execute().
 
-See ["Prepare Postponed Till Execute"](#Prepare Postponed Till Execute) for more information.
+    See ["Prepare Postponed Till Execute"](#Prepare Postponed Till Execute) for more information.
 
 - ora\_exe\_mode
 
-This will set the execute mode of the current statement. Presently
-only one mode is supported;
+    This will set the execute mode of the current statement. Presently
+    only one mode is supported;
 
-    OCI_STMT_SCROLLABLE_READONLY - make result set scrollable
+        OCI_STMT_SCROLLABLE_READONLY - make result set scrollable
 
-See ["SCROLLABLE CURSORS"](#SCROLLABLE CURSORS) for more details.
+    See ["SCROLLABLE CURSORS"](#SCROLLABLE CURSORS) for more details.
 
 - ora\_prefetch\_rows
 
-Sets the number of rows to be prefetched. If it is not set, then the
-default value is 1.  See ["Row Prefetching"](#Row Prefetching) for more details.
+    Sets the number of rows to be prefetched. If it is not set, then the
+    default value is 1.  See ["Row Prefetching"](#Row Prefetching) for more details.
 
 - ora\_prefetch\_memory
 
-Sets the memory level for rows to be prefetched. The application then
-fetches as many rows as will fit into that much memory.  See ["Row Prefetching"](#Row Prefetching) for more details.
+    Sets the memory level for rows to be prefetched. The application then
+    fetches as many rows as will fit into that much memory.  See ["Row Prefetching"](#Row Prefetching) for more details.
 
 - ora\_row\_cache\_off
 
-By default DBD::Oracle will use a row cache when fetching to cut down
-the number of round trips to the server. If you do not want to use an
-array fetch set this value to any value other than 0;
+    By default DBD::Oracle will use a row cache when fetching to cut down
+    the number of round trips to the server. If you do not want to use an
+    array fetch set this value to any value other than 0;
 
-See ["Row Prefetching"](#Row Prefetching) for more details.
+    See ["Row Prefetching"](#Row Prefetching) for more details.
 
 ### __Placeholders__
 
@@ -1609,68 +1609,68 @@ These attributes may be used in the `\%attr` parameter of the
 
 - ora\_type
 
-Specify the placeholder's datatype using an Oracle datatype.
-A fatal error is raised if `ora_type` and the DBI `TYPE` attribute
-are used for the same placeholder.
-Some of these types are not supported by the current version of
-DBD::Oracle and will cause a fatal error if used.
-Constants for the Oracle datatypes may be imported using
+    Specify the placeholder's datatype using an Oracle datatype.
+    A fatal error is raised if `ora_type` and the DBI `TYPE` attribute
+    are used for the same placeholder.
+    Some of these types are not supported by the current version of
+    DBD::Oracle and will cause a fatal error if used.
+    Constants for the Oracle datatypes may be imported using
 
-    use DBD::Oracle qw(:ora_types);
+        use DBD::Oracle qw(:ora_types);
 
-Potentially useful values when DBD::Oracle was built using OCI 7 and later:
+    Potentially useful values when DBD::Oracle was built using OCI 7 and later:
 
-    ORA_VARCHAR2, ORA_STRING, ORA_LONG, ORA_RAW, ORA_LONGRAW,
-    ORA_CHAR, ORA_MLSLABEL, ORA_RSET
+        ORA_VARCHAR2, ORA_STRING, ORA_LONG, ORA_RAW, ORA_LONGRAW,
+        ORA_CHAR, ORA_MLSLABEL, ORA_RSET
 
-Additional values when DBD::Oracle was built using OCI 8 and later:
+    Additional values when DBD::Oracle was built using OCI 8 and later:
 
-    ORA_CLOB, ORA_BLOB, ORA_XMLTYPE, ORA_VARCHAR2_TABLE, ORA_NUMBER_TABLE
+        ORA_CLOB, ORA_BLOB, ORA_XMLTYPE, ORA_VARCHAR2_TABLE, ORA_NUMBER_TABLE
 
-Additional values when DBD::Oracle was built using OCI 9.2 and later:
+    Additional values when DBD::Oracle was built using OCI 9.2 and later:
 
-    SQLT_CHR, SQLT_BIN
+        SQLT_CHR, SQLT_BIN
 
-See ["Binding Cursors"](#Binding Cursors) for the correct way to use ORA\_RSET.
+    See ["Binding Cursors"](#Binding Cursors) for the correct way to use ORA\_RSET.
 
-See ["LOBS AND LONGS"](#LOBS AND LONGS) for how to use ORA\_CLOB and ORA\_BLOB.
+    See ["LOBS AND LONGS"](#LOBS AND LONGS) for how to use ORA\_CLOB and ORA\_BLOB.
 
-See ["SYS.DBMS\_SQL datatypes"](#SYS.DBMS\_SQL datatypes) for ORA\_VARCHAR2\_TABLE, ORA\_NUMBER\_TABLE.
+    See ["SYS.DBMS\_SQL datatypes"](#SYS.DBMS\_SQL datatypes) for ORA\_VARCHAR2\_TABLE, ORA\_NUMBER\_TABLE.
 
-See ["Data Interface for Persistent LOBs"](#Data Interface for Persistent LOBs) for the correct way to use SQLT\_CHR and SQLT\_BIN.
+    See ["Data Interface for Persistent LOBs"](#Data Interface for Persistent LOBs) for the correct way to use SQLT\_CHR and SQLT\_BIN.
 
-See ["OTHER DATA TYPES"](#OTHER DATA TYPES) for more information.
+    See ["OTHER DATA TYPES"](#OTHER DATA TYPES) for more information.
 
-See also ["Placeholders and Bind Values" in DBI](http://search.cpan.org/perldoc?DBI#Placeholders and Bind Values).
+    See also ["Placeholders and Bind Values" in DBI](http://search.cpan.org/perldoc?DBI#Placeholders and Bind Values).
 
 - ora\_csform
 
-Specify the OCI\_ATTR\_CHARSET\_FORM for the bind value. Valid values
-are SQLCS\_IMPLICIT (1) and SQLCS\_NCHAR (2). Both those constants can
-be imported from the DBD::Oracle module. Rarely needed.
+    Specify the OCI\_ATTR\_CHARSET\_FORM for the bind value. Valid values
+    are SQLCS\_IMPLICIT (1) and SQLCS\_NCHAR (2). Both those constants can
+    be imported from the DBD::Oracle module. Rarely needed.
 
 - ora\_csid
 
-Specify the _integer_ OCI\_ATTR\_CHARSET\_ID for the bind value.
-Character set names can't be used currently.
+    Specify the _integer_ OCI\_ATTR\_CHARSET\_ID for the bind value.
+    Character set names can't be used currently.
 
 - ora\_maxdata\_size
 
-Specify the integer OCI\_ATTR\_MAXDATA\_SIZE for the bind value.
-May be needed if a character set conversion from client to server
-causes the data to use more space and so fail with a truncation error.
+    Specify the integer OCI\_ATTR\_MAXDATA\_SIZE for the bind value.
+    May be needed if a character set conversion from client to server
+    causes the data to use more space and so fail with a truncation error.
 
 - ora\_maxarray\_numentries
 
-Specify the maximum number of array entries to allocate. Used with
-ORA\_VARCHAR2\_TABLE, ORA\_NUMBER\_TABLE. Define the maximum number of
-array entries Oracle can pass back to you in OUT variable of type
-TABLE OF ... .
+    Specify the maximum number of array entries to allocate. Used with
+    ORA\_VARCHAR2\_TABLE, ORA\_NUMBER\_TABLE. Define the maximum number of
+    array entries Oracle can pass back to you in OUT variable of type
+    TABLE OF ... .
 
 - ora\_internal\_type
 
-Specify internal data representation. Currently is supported only for
-ORA\_NUMBER\_TABLE.
+    Specify internal data representation. Currently is supported only for
+    ORA\_NUMBER\_TABLE.
 
 ### Optimizing Results
 
@@ -2074,7 +2074,7 @@ a reference to a list. Do not use this in a scalar context.
     $hash_ref = $sth->fetchrow_hashref($name);
 
 Fetches the next row of data and returns a hashref containing the name of the columns as the keys
-and the data itself as the values. Any NULL value is returned as as undef value.
+and the data itself as the values. Any NULL value is returned as undef value.
 
 If there are no more rows or if an error occurs, the this method return undef. You should
 check `$sth->err` afterwards (or use the ["RaiseError"](#RaiseError) attribute) to discover if the undef returned
@@ -2300,86 +2300,86 @@ The following driver-specific methods are used with scrollable cursors.
 
 - ora\_scroll\_position
 
-    $position =  $sth->ora_scroll_position();
+        $position =  $sth->ora_scroll_position();
 
-This method returns the current position (row number) attribute of the result set. Prior to the first fetch this value is 0. This is the only time
-this value will be 0 after the first fetch the value will be set, so you can use this value to test if any rows have been fetched.
-The minimum value will always be 1 after the first fetch. The maximum value will always be the total number of rows in the record set.
+    This method returns the current position (row number) attribute of the result set. Prior to the first fetch this value is 0. This is the only time
+    this value will be 0 after the first fetch the value will be set, so you can use this value to test if any rows have been fetched.
+    The minimum value will always be 1 after the first fetch. The maximum value will always be the total number of rows in the record set.
 
 - ora\_fetch\_scroll
 
-    $ary_ref = $sth->ora_fetch_scroll($fetch_orient,$fetch_offset);
+        $ary_ref = $sth->ora_fetch_scroll($fetch_orient,$fetch_offset);
 
-Works the same as `fetchrow_arrayref`, excepts one passes in a 'Fetch Orientation' constant and a fetch\_offset
-value which will then determine the row that will be fetched. It returns the row as a list containing the field values.
-Null fields are returned as _undef_ values in the list.
+    Works the same as `fetchrow_arrayref`, excepts one passes in a 'Fetch Orientation' constant and a fetch\_offset
+    value which will then determine the row that will be fetched. It returns the row as a list containing the field values.
+    Null fields are returned as _undef_ values in the list.
 
-The valid orientation constant and fetch offset values combination are detailed below
+    The valid orientation constant and fetch offset values combination are detailed below
 
-    OCI_FETCH_CURRENT,  fetches the current row, the fetch offset value is ignored.
-    OCI_FETCH_NEXT,     fetches the next row from the current position, the fetch offset value
-                        is ignored.
-    OCI_FETCH_FIRST,    fetches the first row, the fetch offset value is ignored.
-    OCI_FETCH_LAST,     fetches the last row, the fetch offset value is ignored.
-    OCI_FETCH_PRIOR,    fetches the previous row from the current position, the fetch offset
-                        value is ignored.
+        OCI_FETCH_CURRENT,  fetches the current row, the fetch offset value is ignored.
+        OCI_FETCH_NEXT,     fetches the next row from the current position, the fetch offset value
+                            is ignored.
+        OCI_FETCH_FIRST,    fetches the first row, the fetch offset value is ignored.
+        OCI_FETCH_LAST,     fetches the last row, the fetch offset value is ignored.
+        OCI_FETCH_PRIOR,    fetches the previous row from the current position, the fetch offset
+                            value is ignored.
 
-    OCI_FETCH_ABSOLUTE, fetches the row that is specified by the fetch offset value.
+        OCI_FETCH_ABSOLUTE, fetches the row that is specified by the fetch offset value.
 
-    OCI_FETCH_ABSOLUTE, and a fetch offset value of 1 is equivalent to a OCI_FETCH_FIRST.
-    OCI_FETCH_ABSOLUTE, and a fetch offset value of 0 is equivalent to a OCI_FETCH_CURRENT.
+        OCI_FETCH_ABSOLUTE, and a fetch offset value of 1 is equivalent to a OCI_FETCH_FIRST.
+        OCI_FETCH_ABSOLUTE, and a fetch offset value of 0 is equivalent to a OCI_FETCH_CURRENT.
 
-    OCI_FETCH_RELATIVE, fetches the row relative from the current position as specified by the
-                        fetch offset value.
+        OCI_FETCH_RELATIVE, fetches the row relative from the current position as specified by the
+                            fetch offset value.
 
-    OCI_FETCH_RELATIVE, and a fetch offset value of 0 is equivalent to a OCI_FETCH_CURRENT.
-    OCI_FETCH_RELATIVE, and a fetch offset value of 1 is equivalent to a OCI_FETCH_NEXT.
-    OCI_FETCH_RELATIVE, and a fetch offset value of -1 is equivalent to a OCI_FETCH_PRIOR.
+        OCI_FETCH_RELATIVE, and a fetch offset value of 0 is equivalent to a OCI_FETCH_CURRENT.
+        OCI_FETCH_RELATIVE, and a fetch offset value of 1 is equivalent to a OCI_FETCH_NEXT.
+        OCI_FETCH_RELATIVE, and a fetch offset value of -1 is equivalent to a OCI_FETCH_PRIOR.
 
-The effect that a ora\_fetch\_scroll method call has on the current\_positon attribute is detailed below.
+    The effect that a ora\_fetch\_scroll method call has on the current\_positon attribute is detailed below.
 
-    OCI_FETCH_CURRENT, has no effect on the current_positon attribute.
-    OCI_FETCH_NEXT,    increments current_positon attribute by 1
-    OCI_FETCH_NEXT,    when at the last row in the record set does not change current_positon
-                       attribute, it is equivalent to a OCI_FETCH_CURRENT
-    OCI_FETCH_FIRST,   sets the current_positon attribute to 1.
-    OCI_FETCH_LAST,    sets the current_positon attribute to the total number of rows in the
-                       record set.
-    OCI_FETCH_PRIOR,   decrements current_positon attribute by 1.
-    OCI_FETCH_PRIOR,   when at the first row in the record set does not change current_positon
-                       attribute, it is equivalent to a OCI_FETCH_CURRENT.
+        OCI_FETCH_CURRENT, has no effect on the current_positon attribute.
+        OCI_FETCH_NEXT,    increments current_positon attribute by 1
+        OCI_FETCH_NEXT,    when at the last row in the record set does not change current_positon
+                           attribute, it is equivalent to a OCI_FETCH_CURRENT
+        OCI_FETCH_FIRST,   sets the current_positon attribute to 1.
+        OCI_FETCH_LAST,    sets the current_positon attribute to the total number of rows in the
+                           record set.
+        OCI_FETCH_PRIOR,   decrements current_positon attribute by 1.
+        OCI_FETCH_PRIOR,   when at the first row in the record set does not change current_positon
+                           attribute, it is equivalent to a OCI_FETCH_CURRENT.
 
-    OCI_FETCH_ABSOLUTE, sets the current_positon attribute to the fetch offset value.
-    OCI_FETCH_ABSOLUTE, and a fetch offset value that is less than 1 does not change
-                        current_positon attribute, it is equivalent to a OCI_FETCH_CURRENT.
-    OCI_FETCH_ABSOLUTE, and a fetch offset value that is greater than the number of records in
-                        the record set, does not change current_positon attribute, it is
-                        equivalent to a OCI_FETCH_CURRENT.
-    OCI_FETCH_RELATIVE, sets the current_positon attribute to (current_positon attribute +
-                        fetch offset value).
-    OCI_FETCH_RELATIVE, and a fetch offset value that makes the current position less than 1,
-                        does not change fetch offset value so it is equivalent to a OCI_FETCH_CURRENT.
-    OCI_FETCH_RELATIVE, and a fetch offset value that makes it greater than the number of records
-                        in the record set, does not change fetch offset value so it is equivalent
-                        to a OCI_FETCH_CURRENT.
+        OCI_FETCH_ABSOLUTE, sets the current_positon attribute to the fetch offset value.
+        OCI_FETCH_ABSOLUTE, and a fetch offset value that is less than 1 does not change
+                            current_positon attribute, it is equivalent to a OCI_FETCH_CURRENT.
+        OCI_FETCH_ABSOLUTE, and a fetch offset value that is greater than the number of records in
+                            the record set, does not change current_positon attribute, it is
+                            equivalent to a OCI_FETCH_CURRENT.
+        OCI_FETCH_RELATIVE, sets the current_positon attribute to (current_positon attribute +
+                            fetch offset value).
+        OCI_FETCH_RELATIVE, and a fetch offset value that makes the current position less than 1,
+                            does not change fetch offset value so it is equivalent to a OCI_FETCH_CURRENT.
+        OCI_FETCH_RELATIVE, and a fetch offset value that makes it greater than the number of records
+                            in the record set, does not change fetch offset value so it is equivalent
+                            to a OCI_FETCH_CURRENT.
 
-The effects of the differing orientation constants on the first fetch (current\_postion attribute at 0) are as follows.
+    The effects of the differing orientation constants on the first fetch (current\_postion attribute at 0) are as follows.
 
-    OCI_FETCH_CURRENT, dose not fetch a row or change the current_positon attribute.
-    OCI_FETCH_FIRST,   fetches row 1 and sets the current_positon attribute to 1.
-    OCI_FETCH_LAST,    fetches the last row in the record set and sets the current_positon
-                       attribute to the total number of rows in the record set.
-    OCI_FETCH_NEXT,    equivalent to a OCI_FETCH_FIRST.
-    OCI_FETCH_PRIOR,   equivalent to a OCI_FETCH_CURRENT.
+        OCI_FETCH_CURRENT, dose not fetch a row or change the current_positon attribute.
+        OCI_FETCH_FIRST,   fetches row 1 and sets the current_positon attribute to 1.
+        OCI_FETCH_LAST,    fetches the last row in the record set and sets the current_positon
+                           attribute to the total number of rows in the record set.
+        OCI_FETCH_NEXT,    equivalent to a OCI_FETCH_FIRST.
+        OCI_FETCH_PRIOR,   equivalent to a OCI_FETCH_CURRENT.
 
-    OCI_FETCH_ABSOLUTE, and a fetch offset value that is less than 1 is equivalent to a
-                        OCI_FETCH_CURRENT.
-    OCI_FETCH_ABSOLUTE, and a fetch offset value that is greater than the number of
-                        records in the record set is equivalent to a OCI_FETCH_CURRENT.
-    OCI_FETCH_RELATIVE, and a fetch offset value that is less than 1 is equivalent
-                        to a OCI_FETCH_CURRENT.
-    OCI_FETCH_RELATIVE, and a fetch offset value that makes it greater than the number
-                        of records in the record set, is equivalent to a OCI_FETCH_CURRENT.
+        OCI_FETCH_ABSOLUTE, and a fetch offset value that is less than 1 is equivalent to a
+                            OCI_FETCH_CURRENT.
+        OCI_FETCH_ABSOLUTE, and a fetch offset value that is greater than the number of
+                            records in the record set is equivalent to a OCI_FETCH_CURRENT.
+        OCI_FETCH_RELATIVE, and a fetch offset value that is less than 1 is equivalent
+                            to a OCI_FETCH_CURRENT.
+        OCI_FETCH_RELATIVE, and a fetch offset value that makes it greater than the number
+                            of records in the record set, is equivalent to a OCI_FETCH_CURRENT.
 
 ## Scrollable Cursor Usage
 
@@ -2401,99 +2401,99 @@ method;
 
 - Fetching the Last Row
 
-    $value =  $sth->ora_fetch_scroll(OCI_FETCH_LAST,0);
-    print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
-    print "current scroll position=".$sth->ora_scroll_position()."\n";
+        $value =  $sth->ora_fetch_scroll(OCI_FETCH_LAST,0);
+        print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
+        print "current scroll position=".$sth->ora_scroll_position()."\n";
 
-The current\_positon attribute to will be 20 after this snippet.  This is also a way to get the number of rows in the record set, however,
-if the record set is large this could take some time.
+    The current\_positon attribute to will be 20 after this snippet.  This is also a way to get the number of rows in the record set, however,
+    if the record set is large this could take some time.
 
 - Fetching the Current Row
 
-    $value =  $sth->ora_fetch_scroll(OCI_FETCH_CURRENT,0);
-    print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
-    print "current scroll position=".$sth->ora_scroll_position()."\n";
+        $value =  $sth->ora_fetch_scroll(OCI_FETCH_CURRENT,0);
+        print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
+        print "current scroll position=".$sth->ora_scroll_position()."\n";
 
-The current\_positon attribute will still be 20 after this snippet.
+    The current\_positon attribute will still be 20 after this snippet.
 
 - Fetching the First Row
 
-    $value =  $sth->ora_fetch_scroll(OCI_FETCH_FIRST,0);
-    print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
-    print "current scroll position=".$sth->ora_scroll_position()."\n";
+        $value =  $sth->ora_fetch_scroll(OCI_FETCH_FIRST,0);
+        print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
+        print "current scroll position=".$sth->ora_scroll_position()."\n";
 
-The current\_positon attribute will be 1 after this snippet.
+    The current\_positon attribute will be 1 after this snippet.
 
 - Fetching the Next Row
 
-    for(my $i=0;$i<=3;$i++){
-       $value =  $sth->ora_fetch_scroll(OCI_FETCH_NEXT,0);
-       print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
-    }
-    print "current scroll position=".$sth->ora_scroll_position()."\n";
+        for(my $i=0;$i<=3;$i++){
+           $value =  $sth->ora_fetch_scroll(OCI_FETCH_NEXT,0);
+           print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
+        }
+        print "current scroll position=".$sth->ora_scroll_position()."\n";
 
-The current\_positon attribute will be 5 after this snippet.
+    The current\_positon attribute will be 5 after this snippet.
 
 - Fetching the Prior Row
 
-    for(my $i=0;$i<=3;$i++){
-       $value =  $sth->ora_fetch_scroll(OCI_FETCH_PRIOR,0);
-       print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
-    }
-    print "current scroll position=".$sth->ora_scroll_position()."\n";
+        for(my $i=0;$i<=3;$i++){
+           $value =  $sth->ora_fetch_scroll(OCI_FETCH_PRIOR,0);
+           print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
+        }
+        print "current scroll position=".$sth->ora_scroll_position()."\n";
 
-The current\_positon attribute will be 1 after this snippet.
+    The current\_positon attribute will be 1 after this snippet.
 
 - Fetching the 10th Row
 
-    $value =  $sth->ora_fetch_scroll(OCI_FETCH_ABSOLUTE,10);
-    print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
-    print "current scroll position=".$sth->ora_scroll_position()."\n";
+        $value =  $sth->ora_fetch_scroll(OCI_FETCH_ABSOLUTE,10);
+        print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
+        print "current scroll position=".$sth->ora_scroll_position()."\n";
 
-The current\_positon attribute will be 10 after this snippet.
+    The current\_positon attribute will be 10 after this snippet.
 
 - Fetching the 10th to 14th Row
 
-    for(my $i=10;$i<15;$i++){
-        $value =  $sth->ora_fetch_scroll(OCI_FETCH_ABSOLUTE,$i);
-        print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
-    }
-    print "current scroll position=".$sth->ora_scroll_position()."\n";
+        for(my $i=10;$i<15;$i++){
+            $value =  $sth->ora_fetch_scroll(OCI_FETCH_ABSOLUTE,$i);
+            print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
+        }
+        print "current scroll position=".$sth->ora_scroll_position()."\n";
 
-The current\_positon attribute will be 14 after this snippet.
+    The current\_positon attribute will be 14 after this snippet.
 
 - Fetching the 14th to 10th Row
 
-    for(my $i=14;$i>9;$i--){
-      $value =  $sth->ora_fetch_scroll(OCI_FETCH_ABSOLUTE,$i);
-      print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
-    }
-    print "current scroll position=".$sth->ora_scroll_position()."\n";
+        for(my $i=14;$i>9;$i--){
+          $value =  $sth->ora_fetch_scroll(OCI_FETCH_ABSOLUTE,$i);
+          print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
+        }
+        print "current scroll position=".$sth->ora_scroll_position()."\n";
 
-The current\_positon attribute will be 10 after this snippet.
+    The current\_positon attribute will be 10 after this snippet.
 
 - Fetching the 5th Row From the Present Position.
 
-    $value =  $sth->ora_fetch_scroll(OCI_FETCH_RELATIVE,5);
-    print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
-    print "current scroll position=".$sth->ora_scroll_position()."\n";
+        $value =  $sth->ora_fetch_scroll(OCI_FETCH_RELATIVE,5);
+        print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
+        print "current scroll position=".$sth->ora_scroll_position()."\n";
 
-The current\_positon attribute will be 15 after this snippet.
+    The current\_positon attribute will be 15 after this snippet.
 
 - Fetching the 9th Row Prior From the Present Position
 
-    $value =  $sth->ora_fetch_scroll(OCI_FETCH_RELATIVE,-9);
-    print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
-    print "current scroll position=".$sth->ora_scroll_position()."\n";
+        $value =  $sth->ora_fetch_scroll(OCI_FETCH_RELATIVE,-9);
+        print "id=".$value->[0].", First Name=".$value->[1].", Last Name=".$value->[2]."\n";
+        print "current scroll position=".$sth->ora_scroll_position()."\n";
 
-The current\_positon attribute will be 6 after this snippet.
+    The current\_positon attribute will be 6 after this snippet.
 
 - Use Finish
 
-    $sth->finish();
+        $sth->finish();
 
-When using scrollable cursors it is required that you use the $sth->finish() method when you are done with the cursor as this type of
-cursor has to be explicitly cancelled on the server. If you do not do this you may cause resource problems on your database.
+    When using scrollable cursors it is required that you use the $sth->finish() method when you are done with the cursor as this type of
+    cursor has to be explicitly cancelled on the server. If you do not do this you may cause resource problems on your database.
 
 # LOBS AND LONGS
 
@@ -2506,16 +2506,16 @@ DBD::Oracle now offers three interfaces to LOB and LONG data,
 
 - ["Data Interface for Persistent LOBs"](#Data Interface for Persistent LOBs)
 
-With this interface DBD::Oracle handles your data directly utilizing regular OCI calls, Oracle itself takes care of the LOB Locator operations in the case of
-BLOBs and CLOBs treating them exactly as if they were the same as the legacy LONG or LONG RAW types.
+    With this interface DBD::Oracle handles your data directly utilizing regular OCI calls, Oracle itself takes care of the LOB Locator operations in the case of
+    BLOBs and CLOBs treating them exactly as if they were the same as the legacy LONG or LONG RAW types.
 
 - ["Data Interface for LOB Locators"](#Data Interface for LOB Locators)
 
-With this interface DBD::Oracle handles your data utilizing LOB Locator OCI calls so it only works with CLOB and BLOB datatypes. With this interface DBD::Oracle takes care of the LOB Locator operations for you.
+    With this interface DBD::Oracle handles your data utilizing LOB Locator OCI calls so it only works with CLOB and BLOB datatypes. With this interface DBD::Oracle takes care of the LOB Locator operations for you.
 
 - ["LOB Locator Method Interface"](#LOB Locator Method Interface)
 
-This allows the user direct access to the LOB Locator methods, so you have to take case of the LOB Locator operations yourself.
+    This allows the user direct access to the LOB Locator methods, so you have to take case of the LOB Locator operations yourself.
 
 Generally speaking the interface that you will chose will be dependent on what end you are trying to achieve. All have their benefits and
 drawbacks.
@@ -2524,26 +2524,26 @@ One point to remember when working with LOBs (CLOBs, BLOBs) is if your LOB colum
 
 - NULL
 
-The table cell is created, but the cell holds no locator or value.
-If your LOB field is in this state then there is no LOB Locator that DBD::Oracle can work so if your encounter a
+    The table cell is created, but the cell holds no locator or value.
+    If your LOB field is in this state then there is no LOB Locator that DBD::Oracle can work so if your encounter a
 
-    DBD::Oracle::db::ora_lob_read: locator is not of type OCILobLocatorPtr
+        DBD::Oracle::db::ora_lob_read: locator is not of type OCILobLocatorPtr
 
-error when working with a LOB.
+    error when working with a LOB.
 
-You can correct this by using an SQL UPDATE statement to reset the LOB column to a non-NULL (or empty LOB) value with either EMPTY\_BLOB or EMPTY\_CLOB as in this example;
+    You can correct this by using an SQL UPDATE statement to reset the LOB column to a non-NULL (or empty LOB) value with either EMPTY\_BLOB or EMPTY\_CLOB as in this example;
 
-    UPDATE lob_example
-       SET bindata=EMPTY_BLOB()
-     WHERE bindata IS NULL.
+        UPDATE lob_example
+           SET bindata=EMPTY_BLOB()
+         WHERE bindata IS NULL.
 
 - Empty
 
-A LOB instance with a locator exists in the cell, but it has no value. The length of the LOB is zero. In this case DBD::Oracle will return 'undef' for the field.
+    A LOB instance with a locator exists in the cell, but it has no value. The length of the LOB is zero. In this case DBD::Oracle will return 'undef' for the field.
 
 - Populated
 
-A LOB instance with a locator and a value exists in the cell. You actually get the LOB value.
+    A LOB instance with a locator and a value exists in the cell. You actually get the LOB value.
 
 ## Data Interface for Persistent LOBs
 
@@ -2785,58 +2785,58 @@ Below are the limitations of Remote LOBs;
 
 - Queries involving more than one database are not supported;
 
-so the following returns an error:
+    so the following returns an error:
 
-    SELECT t1.lobcol,
-    	 a2.lobcol
-      FROM t1,
-           t2.lobcol@dbs2 a2 W
-     WHERE LENGTH(t1.lobcol) = LENGTH(a2.lobcol);
+        SELECT t1.lobcol,
+        	 a2.lobcol
+          FROM t1,
+               t2.lobcol@dbs2 a2 W
+         WHERE LENGTH(t1.lobcol) = LENGTH(a2.lobcol);
 
-as does:
+    as does:
 
-       SELECT t1.lobcol
-         FROM t1@dbs1
-    UNION ALL
-       SELECT t2.lobcol
-         FROM t2@dbs2;
+           SELECT t1.lobcol
+             FROM t1@dbs1
+        UNION ALL
+           SELECT t2.lobcol
+             FROM t2@dbs2;
 
 - DDL commands are not supported;
 
-so the following returns an error:
+    so the following returns an error:
 
-    CREATE VIEW v AS SELECT lob_col FROM tab@dbs;
+        CREATE VIEW v AS SELECT lob_col FROM tab@dbs;
 
 - Only binds and defines for data going into remote persistent LOBs are supported.
 
-so that parameter passing in PL/SQL where CHAR data is bound or defined for remote LOBs is not allowed .
+    so that parameter passing in PL/SQL where CHAR data is bound or defined for remote LOBs is not allowed .
 
-These statements all produce errors:
+    These statements all produce errors:
 
-    SELECT foo() FROM table1@dbs2;
+        SELECT foo() FROM table1@dbs2;
 
-    SELECT foo()@dbs INTO char_val FROM DUAL;
+        SELECT foo()@dbs INTO char_val FROM DUAL;
 
-    SELECT XMLType().getclobval FROM table1@dbs2;
+        SELECT XMLType().getclobval FROM table1@dbs2;
 
 - If the remote object is a view such as
 
-    CREATE VIEW v AS SELECT foo() FROM ...
+        CREATE VIEW v AS SELECT foo() FROM ...
 
-the following would not work:
+    the following would not work:
 
-    SELECT * FROM v@dbs2;
+        SELECT * FROM v@dbs2;
 
 - Limited PL/SQL parameter passing
 
-PL/SQL parameter passing is not allowed where the actual argument is a LOB type
-and the remote argument is one of VARCHAR2, NVARCHAR2, CHAR, NCHAR, or RAW.
+    PL/SQL parameter passing is not allowed where the actual argument is a LOB type
+    and the remote argument is one of VARCHAR2, NVARCHAR2, CHAR, NCHAR, or RAW.
 
 - RETURNING INTO does not support implicit conversions between CHAR and CLOB.
 
-so the following returns an error:
+    so the following returns an error:
 
-    SELECT t1.lobcol as test, a2.lobcol FROM t1, t2.lobcol@dbs2 a2 RETURNING test
+        SELECT t1.lobcol as test, a2.lobcol FROM t1, t2.lobcol@dbs2 a2 RETURNING test
 
 ## Locator Data Interface
 
@@ -2981,63 +2981,63 @@ handle are lost, the handle is destroyed and the locators are freed.
 
 - ora\_lob\_read
 
-    $data = $dbh->ora_lob_read($lob_locator, $offset, $length);
+        $data = $dbh->ora_lob_read($lob_locator, $offset, $length);
 
-Read a portion of the LOB. $offset starts at 1.
-Uses the Oracle OCILobRead function.
+    Read a portion of the LOB. $offset starts at 1.
+    Uses the Oracle OCILobRead function.
 
-NOTE: DBD::Oracle post 1.46 will return undef for any read lob if the
-length specified in the ora\_lob\_read is 0. See RT 55028. This avoids
-the potential problem with empty lobs (created with empty\_clob) which
-return a length of 0 from ora\_lob\_length and prior to 1.46 a call to
-ora\_lob\_read with a 0 length would segfault.
+    NOTE: DBD::Oracle post 1.46 will return undef for any read lob if the
+    length specified in the ora\_lob\_read is 0. See RT 55028. This avoids
+    the potential problem with empty lobs (created with empty\_clob) which
+    return a length of 0 from ora\_lob\_length and prior to 1.46 a call to
+    ora\_lob\_read with a 0 length would segfault.
 
 - ora\_lob\_write
 
-    $rc = $dbh->ora_lob_write($lob_locator, $offset, $data);
+        $rc = $dbh->ora_lob_write($lob_locator, $offset, $data);
 
-Write/overwrite a portion of the LOB. $offset starts at 1.
-Uses the Oracle OCILobWrite function.
+    Write/overwrite a portion of the LOB. $offset starts at 1.
+    Uses the Oracle OCILobWrite function.
 
 - ora\_lob\_append
 
-    $rc = $dbh->ora_lob_append($lob_locator, $data);
+        $rc = $dbh->ora_lob_append($lob_locator, $data);
 
-Append $data to the LOB.  Uses the Oracle OCILobWriteAppend function.
+    Append $data to the LOB.  Uses the Oracle OCILobWriteAppend function.
 
 - ora\_lob\_trim
 
-    $rc = $dbh->ora_lob_trim($lob_locator, $length);
+        $rc = $dbh->ora_lob_trim($lob_locator, $length);
 
-Trims the length of the LOB to $length.
-Uses the Oracle OCILobTrim function.
+    Trims the length of the LOB to $length.
+    Uses the Oracle OCILobTrim function.
 
 - ora\_lob\_length
 
-    $length = $dbh->ora_lob_length($lob_locator);
+        $length = $dbh->ora_lob_length($lob_locator);
 
-Returns the length of the LOB.
-Uses the Oracle OCILobGetLength function.
+    Returns the length of the LOB.
+    Uses the Oracle OCILobGetLength function.
 
 - ora\_lob\_is\_init
 
-    $is_init = $dbh->ora_lob_is_init($lob_locator);
+        $is_init = $dbh->ora_lob_is_init($lob_locator);
 
-Returns true(1) if the Lob Locator is initialized false(0) if it is not, or 'undef'
-if there is an error.
-Uses the Oracle OCILobLocatorIsInit function.
+    Returns true(1) if the Lob Locator is initialized false(0) if it is not, or 'undef'
+    if there is an error.
+    Uses the Oracle OCILobLocatorIsInit function.
 
 - ora\_lob\_chunk\_size
 
-    $chunk_size = $dbh->ora_lob_chunk_size($lob_locator);
+        $chunk_size = $dbh->ora_lob_chunk_size($lob_locator);
 
-Returns the chunk size of the LOB.
-Uses the Oracle OCILobGetChunkSize function.
+    Returns the chunk size of the LOB.
+    Uses the Oracle OCILobGetChunkSize function.
 
-For optimal performance, Oracle recommends reading from and
-writing to a LOB in batches using a multiple of the LOB chunk size.
-In Oracle 10g and before, when all defaults are in place, this
-chunk size defaults to 8k (8192).
+    For optimal performance, Oracle recommends reading from and
+    writing to a LOB in batches using a multiple of the LOB chunk size.
+    In Oracle 10g and before, when all defaults are in place, this
+    chunk size defaults to 8k (8192).
 
 ### LOB Locator Method Examples
 
@@ -4182,31 +4182,31 @@ So to make a short story a little longer:
 
 - 1
 
-If you are using Oracle 7 or early 8 DB and you can manage to get a 9 client and you can use
-any DBD::Oracle version.
+    If you are using Oracle 7 or early 8 DB and you can manage to get a 9 client and you can use
+    any DBD::Oracle version.
 
 - 2
 
-If you have to use an Oracle 7 client then DBD::Oracle 1.17 should work
+    If you have to use an Oracle 7 client then DBD::Oracle 1.17 should work
 
 - 3
 
-Same thing for 8 up to R2, use 1.17, if you are lucky and have the right patch-set you might
-go with 1.18.
+    Same thing for 8 up to R2, use 1.17, if you are lucky and have the right patch-set you might
+    go with 1.18.
 
 - 4
 
-For 8iR3 you can use any of the DBD::Oracle versions up to 1.21. Again this depends on your
-patch-set, If you run into trouble go with 1.19
+    For 8iR3 you can use any of the DBD::Oracle versions up to 1.21. Again this depends on your
+    patch-set, If you run into trouble go with 1.19
 
 - 5
 
-After 9.2 you can use any version you want.
+    After 9.2 you can use any version you want.
 
 - 6
 
-It seems that the 10g client can only connect to 9 and 11 DBs while the 9 can go back to 7
-and even get to 10. I am not sure what the 11g client can connect to.
+    It seems that the 10g client can only connect to 9 and 11 DBs while the 9 can go back to 7
+    and even get to 10. I am not sure what the 11g client can connect to.
 
 # BUGS AND LIMITATIONS
 
@@ -4218,41 +4218,41 @@ See [https://rt.cpan.org/Public/Bug/Display.html?id=69350](https://rt.cpan.org/P
 
 - [DBI](http://search.cpan.org/perldoc?DBI)
 
-http://search.cpan.org/~timb/DBD-Oracle/MANIFEST for all files in
-the DBD::Oracle source distribution including the examples in the
-Oracle.ex directory
+    http://search.cpan.org/~timb/DBD-Oracle/MANIFEST for all files in
+    the DBD::Oracle source distribution including the examples in the
+    Oracle.ex directory
 
 - DBD::Oracle Tutorial
 
-http://www.pythian.com/blogs/wp-content/uploads/introduction-dbd-oracle.html
+    http://www.pythian.com/blogs/wp-content/uploads/introduction-dbd-oracle.html
 
 - Oracle Instant Client
 
-http://www.oracle.com/technology/tech/oci/instantclient/index.html
+    http://www.oracle.com/technology/tech/oci/instantclient/index.html
 
 - Oracle on Linux
 
-http://www.ixora.com.au/
+    http://www.ixora.com.au/
 
 - Free Oracle Tools and Links
 
-ora\_explain supplied and installed with DBD::Oracle.
+    ora\_explain supplied and installed with DBD::Oracle.
 
-http://www.orafaq.com/
+    http://www.orafaq.com/
 
-http://vonnieda.org/oracletool/
+    http://vonnieda.org/oracletool/
 
 - Commercial Oracle Tools and Links
 
-Assorted tools and references for general information.
-No recommendation implied.
+    Assorted tools and references for general information.
+    No recommendation implied.
 
-http://www.platinum.com
+    http://www.platinum.com
 
-http://www.SoftTreeTech.com
+    http://www.SoftTreeTech.com
 
-Also PL/Vision from RevealNet and Steven Feuerstein, and
-"Q" from Savant Corporation.
+    Also PL/Vision from RevealNet and Steven Feuerstein, and
+    "Q" from Savant Corporation.
 
 # AUTHORS
 
