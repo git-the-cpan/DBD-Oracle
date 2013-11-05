@@ -2,7 +2,7 @@ NAME
     DBD::Oracle - Oracle database driver for the DBI module
 
 VERSION
-    version 1.66
+    version 1.67_00
 
 SYNOPSIS
       use DBI;
@@ -1303,6 +1303,37 @@ DATABASE HANDLE METHODS
      alter table bloggind add (Bla_BLA NUMBER)
 
     any case can be used to get info on the column.
+
+  statistics_info()
+    Oracle does not support catalogues so TABLE_CAT is ignored as selection
+    criterion. The TABLE_CAT field of a fetched row is always NULL (undef).
+    See "table_info()" for more detailed information.
+
+    The INDEX_QUALIFIER field of a fetched row is always NULL (undef), for
+    the same reason as for TABLE_CAT.
+
+    If an index was created without an identifier (e.g. in the course of a
+    PK creation), INDEX_NAME contains a system generated name with the form
+    SYS_.
+
+    COLUMN_NAME may contain a system generated name (e.g. for function-based
+    indexes).
+
+    For the TYPE column, a simple mapping is used:
+
+      NORMAL   btree
+      CLUSTER  clustered
+      ...      other
+
+    The $quick parameter is currently ignored. The method uses the
+    dictionary with the gathered statistics, thus cannot ensure that the
+    values for CARDINALITY and PAGES are current.
+
+    The result set is ordered by NON_UNIQUE, TYPE, INDEX_QUALIFIER,
+    INDEX_NAME, ORDINAL_POSITION.
+
+    An identifier is passed *as is*, i.e. as the user provides or Oracle
+    returns it. See "table_info()" for more detailed information.
 
   selectrow_array
       @row_ary = $dbh->selectrow_array($sql);

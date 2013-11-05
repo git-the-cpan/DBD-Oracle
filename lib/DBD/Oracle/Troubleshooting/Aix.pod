@@ -11,7 +11,7 @@ DBD::Oracle::Troubleshooting::Aix - Tips and Hints to Troubleshoot DBD::Oracle o
 
 =head1 VERSION
 
-version 1.66
+version 1.67_00
 
 =head1 Using Visual Age 7 C Compiler 
 
@@ -164,7 +164,7 @@ Stephen de Vries
 
     Rafael Caceres
 
-    > I dont believe I compiled Oracle.  During the installation it was linked
+    > I don't believe I compiled Oracle.  During the installation it was linked
     > but I am not sure it was compiled
     > 
     > I used a xlc compiler to compile PERL.
@@ -174,7 +174,7 @@ Stephen de Vries
     >          You may also need do: ORACCENV='cc=xlc_r'; export ORACCENV
     >          Also see the README about the -p option
     > 
-    > this probobly means I need to rebuild PERL with xlc_r??
+    > this probably means I need to rebuild PERL with xlc_r??
     > 
     > thanx
     > 
@@ -200,7 +200,7 @@ Stephen de Vries
     Message-ID: <BAY1-F58Temqpg2ItZe00032a0f@hotmail.com>
 
     Here is a tip for compiling DBD::Oracle as a 32 bit application on AIX 5.1 
-    64 bit and Oracle 9.2 64 bit without editting any makefiles. I hope people 
+    64 bit and Oracle 9.2 64 bit without editing any makefiles. I hope people
     find this useful:
 
     First, the versions of products I used:
