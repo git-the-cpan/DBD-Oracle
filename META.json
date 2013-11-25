@@ -7,7 +7,7 @@
       "Martin J. Evans <mjevans@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300037, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 5.006, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -57,18 +57,18 @@
    "provides" : {
       "DBD::Oracle" : {
          "file" : "lib/DBD/Oracle.pm",
-         "version" : "1.67_00"
+         "version" : "1.68"
       },
       "DBD::Oracle::GetInfo" : {
          "file" : "lib/DBD/Oracle/GetInfo.pm",
-         "version" : "1.67_00"
+         "version" : "1.68"
       },
       "DBD::Oracle::Object" : {
          "file" : "lib/DBD/Oracle/Object.pm",
-         "version" : "1.67_00"
+         "version" : "1.68"
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
          "mailto" : "bug-dbd-oracle at rt.cpan.org",
@@ -81,7 +81,7 @@
          "web" : "https://github.com/pythian/DBD-Oracle"
       }
    },
-   "version" : "1.67_00",
+   "version" : "1.68",
    "x_authority" : "cpan:PYTHIAN",
    "x_contributors" : [
       "David E. Wheeler <david@justatheory.com>",
