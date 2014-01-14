@@ -5,13 +5,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 DBD::Oracle::Troubleshooting::Linux - Tips and Hints to Troubleshoot DBD::Oracle on Linux
 
 =head1 VERSION
 
-version 1.68
+version 1.69_01
 
 =head1 Installing with Instantclient .rpm files.
 
