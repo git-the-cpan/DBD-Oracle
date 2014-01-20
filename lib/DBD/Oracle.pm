@@ -11,7 +11,7 @@ my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 
 {
 package DBD::Oracle;
-$DBD::Oracle::VERSION = '1.69_01';
+$DBD::Oracle::VERSION = '1.69_02';
 BEGIN {
   $DBD::Oracle::AUTHORITY = 'cpan:PYTHIAN';
 }
@@ -33,7 +33,7 @@ BEGIN {
 	    ORA_CLOB ORA_BLOB ORA_RSET ORA_VARCHAR2_TABLE ORA_NUMBER_TABLE
 	    SQLT_INT SQLT_FLT ORA_OCI SQLT_CHR SQLT_BIN
 	) ],
-        ora_session_modes => [ qw( ORA_SYSDBA ORA_SYSOPER ORA_SYSASM) ],
+        ora_session_modes => [ qw( ORA_SYSDBA ORA_SYSOPER ORA_SYSASM ORA_SYSBACKUP ORA_SYSDG ORA_SYSKM) ],
         ora_fetch_orient  => [ qw( OCI_FETCH_NEXT OCI_FETCH_CURRENT OCI_FETCH_FIRST
         			   OCI_FETCH_LAST OCI_FETCH_PRIOR OCI_FETCH_ABSOLUTE
         			   OCI_FETCH_RELATIVE)],
@@ -200,6 +200,10 @@ BEGIN {
 
     sub connect {
 	my ($drh, $dbname, $user, $auth, $attr)= @_;
+
+    # Make 'sid=whatever' an alias for 'whatever'.
+    # see  RT91775
+    $dbname =~ s/^sid=([^;]+)$/$1/;
 
 	if ($dbname =~ /;/) {
 	    my ($n,$v);
@@ -1204,15 +1208,13 @@ __END__
 
 =pod
 
-=encoding UTF-8
-
 =head1 NAME
 
 DBD::Oracle - Oracle database driver for the DBI module
 
 =head1 VERSION
 
-version 1.69_01
+version 1.69_02
 
 =head1 SYNOPSIS
 
@@ -1242,7 +1244,7 @@ consult the L<DBI> documentation first!
 
 =item :ora_session_modes
 
-ORA_SYSDBA ORA_SYSOPER ORA_SYSASM
+ORA_SYSDBA ORA_SYSOPER ORA_SYSASM ORA_SYSBACKUP ORA_SYSDG ORA_SYSKM
 
 =item :ora_types
 
@@ -1633,8 +1635,9 @@ to sleep between retries simple add a sleep to your callback sub.
 =head4 ora_session_mode
 
 The ora_session_mode attribute can be used to connect with SYSDBA,
-SYSOPER and ORA_SYSASM authorization.
-The ORA_SYSDBA, ORA_SYSOPER and ORA_SYSASM constants can be imported using
+SYSOPER, ORA_SYSASM, ORA_SYSBACKUP, ORA_SYSKM and ORA_SYSDG authorization.
+The ORA_SYSDBA, ORA_SYSOPER, ORA_SYSASM, ORA_SYSBACKUP, ORA_SYSKM 
+and ORA_SYSDG constants can be imported using
 
   use DBD::Oracle qw(:ora_session_modes);
 

@@ -2,7 +2,7 @@ NAME
     DBD::Oracle - Oracle database driver for the DBI module
 
 VERSION
-    version 1.69_01
+    version 1.69_02
 
 SYNOPSIS
       use DBI;
@@ -26,7 +26,7 @@ DESCRIPTION
 
 CONSTANTS
     :ora_session_modes
-        ORA_SYSDBA ORA_SYSOPER ORA_SYSASM
+        ORA_SYSDBA ORA_SYSOPER ORA_SYSASM ORA_SYSBACKUP ORA_SYSDG ORA_SYSKM
 
     :ora_types
           ORA_VARCHAR2 ORA_STRING ORA_NUMBER ORA_LONG ORA_ROWID ORA_DATE ORA_RAW
@@ -403,8 +403,9 @@ DBI CLASS METHODS
 
    ora_session_mode
     The ora_session_mode attribute can be used to connect with SYSDBA,
-    SYSOPER and ORA_SYSASM authorization. The ORA_SYSDBA, ORA_SYSOPER and
-    ORA_SYSASM constants can be imported using
+    SYSOPER, ORA_SYSASM, ORA_SYSBACKUP, ORA_SYSKM and ORA_SYSDG
+    authorization. The ORA_SYSDBA, ORA_SYSOPER, ORA_SYSASM, ORA_SYSBACKUP,
+    ORA_SYSKM and ORA_SYSDG constants can be imported using
 
       use DBD::Oracle qw(:ora_session_modes);
 

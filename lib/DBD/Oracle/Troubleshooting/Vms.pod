@@ -5,15 +5,13 @@ __END__
 
 =pod
 
-=encoding UTF-8
-
 =head1 NAME
 
 DBD::Oracle::Troubleshooting::Vms - Tips and Hints to Troubleshoot DBD::Oracle on Vms
 
 =head1 VERSION
 
-version 1.69_01
+version 1.69_02
 
 =head1 General Info
 

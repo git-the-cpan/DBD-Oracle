@@ -538,8 +538,12 @@ dbd_db_login6(SV *dbh, imp_dbh_t *imp_dbh, char *dbname, char *uid, char *pwd, S
 
     if (!imp_dbh->envhp ) {
 		SV **init_mode_sv;
-		ub4 init_mode = OCI_OBJECT;	/* needed for LOBs (8.0.4)	*/
+		ub4 init_mode = OCI_OBJECT;/* needed for LOBs (8.0.4)	*/
 		DBD_ATTRIB_GET_IV(attr, "ora_init_mode",13, init_mode_sv, init_mode);
+
+#if defined(USE_ITHREADS) || defined(MULTIPLICITY) || defined(USE_5005THREADS)
+        init_mode |= OCI_THREADED;
+#endif
 
 		{
 			size_t rsize = 0;
@@ -4341,10 +4345,20 @@ dbd_st_FETCH_attrib(SV *sth, imp_sth_t *imp_sth, SV *keysv)
 
 	if (kl==4 && strEQ(key, "NAME")) {
 		AV *av = newAV();
-		retsv = newRV(sv_2mortal((SV*)av));
-		while(--i >= 0)
-			av_store(av, i, newSVpv((char*)imp_sth->fbh[i].name,0));
+        SV *x;
 
+		retsv = newRV(sv_2mortal((SV*)av));
+		while(--i >= 0) {
+            x = newSVpv((char*)imp_sth->fbh[i].name,0);
+            if (CSFORM_IMPLIES_UTF8(SQLCS_IMPLICIT)) {
+#ifdef sv_utf8_decode
+                sv_utf8_decode(x);
+#else
+                SvUTF8_on(x);
+#endif
+            }
+			av_store(av, i, x);
+        }
 	}
 	else if (kl==11 && strEQ(key, "ParamValues")) {
 		HV *pvhv = newHV();

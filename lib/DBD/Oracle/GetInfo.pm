@@ -1,5 +1,5 @@
 package DBD::Oracle::GetInfo;
-$DBD::Oracle::GetInfo::VERSION = '1.69_01';
+$DBD::Oracle::GetInfo::VERSION = '1.69_02';
 BEGIN {
   $DBD::Oracle::GetInfo::AUTHORITY = 'cpan:PYTHIAN';
 }
@@ -287,15 +287,13 @@ __END__
 
 =pod
 
-=encoding UTF-8
-
 =head1 NAME
 
 DBD::Oracle::GetInfo - Wrapper to get Oracle information
 
 =head1 VERSION
 
-version 1.69_01
+version 1.69_02
 
 =head1 AUTHORS
 
