@@ -5,13 +5,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 DBD::Oracle::Troubleshooting::Aix - Tips and Hints to Troubleshoot DBD::Oracle on AIX
 
 =head1 VERSION
 
-version 1.70
+version 1.71_00
 
 =head1 Using Visual Age 7 C Compiler 
 

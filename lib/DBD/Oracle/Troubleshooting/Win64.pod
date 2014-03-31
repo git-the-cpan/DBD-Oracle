@@ -5,13 +5,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 DBD::Oracle::Troubleshooting::Win64 - Tips and Hints to Troubleshoot DBD::Oracle on Win64
 
 =head1 VERSION
 
-version 1.70
+version 1.71_00
 
 =head1 DBD::Oracle and Windows 64bit 
 
