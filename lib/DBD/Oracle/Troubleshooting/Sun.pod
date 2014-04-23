@@ -13,7 +13,7 @@ DBD::Oracle::Troubleshooting::Sun - Tips and Hints to Troubleshoot DBD::Oracle o
 
 =head1 VERSION
 
-version 1.73_00
+version 1.73_01
 
 =head1 General Info
 

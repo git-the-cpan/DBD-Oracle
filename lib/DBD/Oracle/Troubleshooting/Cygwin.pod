@@ -13,7 +13,7 @@ DBD::Oracle::Troubleshooting::Cygwin - Tips and Hints to Troubleshoot DBD::Oracl
 
 =head1 VERSION
 
-version 1.73_00
+version 1.73_01
 
 =head1 General Info
 
