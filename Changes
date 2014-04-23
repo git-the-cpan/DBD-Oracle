@@ -1,5 +1,8 @@
 Revision history for DBD::Oracle
 
+1.73_00   2014-04-23
+  - Reverts current fix for RT-88185, as it causes breakage. (GH#14)
+
 1.72      2014-04-14
   - promote 1.71_00 to stable.
 
