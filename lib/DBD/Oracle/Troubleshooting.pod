@@ -13,7 +13,7 @@ DBD::Oracle::Troubleshooting  - Tips and Hints to Troubleshoot DBD::Oracle
 
 =head1 VERSION
 
-version 1.73_01
+version 1.74
 
 =head1 CONNECTING TO ORACLE
 

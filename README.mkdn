@@ -4,7 +4,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 # VERSION
 
-version 1.73\_01
+version 1.74
 
 # SYNOPSIS
 
@@ -40,6 +40,7 @@ consult the [DBI](https://metacpan.org/pod/DBI) documentation first!
         ORA_LONGRAW ORA_CHAR ORA_CHARZ ORA_MLSLABEL ORA_XMLTYPE ORA_CLOB ORA_BLOB
         ORA_RSET ORA_VARCHAR2_TABLE ORA_NUMBER_TABLE SQLT_INT SQLT_FLT ORA_OCI
         SQLT_CHR SQLT_BIN
+
 - SQLCS\_IMPLICIT
 - SQLCS\_NCHAR
 
@@ -82,6 +83,7 @@ consult the [DBI](https://metacpan.org/pod/DBI) documentation first!
 - :ora\_exe\_modes
 
         OCI_STMT_SCROLLABLE_READONLY
+
 - :ora\_fail\_over
 
         OCI_FO_END OCI_FO_ABORT OCI_FO_REAUTH OCI_FO_BEGIN OCI_FO_ERROR
@@ -251,32 +253,32 @@ attempts another event.
       my ($fo_event,$fo_type, $dbh) = @_;
       if ($fo_event == OCI_FO_BEGIN){
 
-      print " Instance Unavailable Please stand by!! \n";
-      printf(" Your TAF type is %s \n",
-                       (($fo_type==OCI_FO_NONE) ? "NONE"
-                       :($fo_type==OCI_FO_SESSION) ? "SESSION"
-                       :($fo_type==OCI_FO_SELECT) ? "SELECT"
-                       : "UNKNOWN!"));
-    }
-    elsif ($fo_event == OCI_FO_ABORT){
-       print " Failover aborted. Failover will not take place.\n";
-    }
-    elsif ($fo_event == OCI_FO_END){
-       printf(" Failover ended ...Resuming your %s\n",(($fo_type==OCI_FO_NONE) ? "NONE"
-                                                      :($fo_type==OCI_FO_SESSION) ? "SESSION"
-                                                      :($fo_type==OCI_FO_SELECT) ? "SELECT"
-                                                      : "UNKNOWN!"));
-    }
-    elsif ($fo_event == OCI_FO_REAUTH){
-       print " Failed over user. Resuming services\n";
-    }
-    elsif ($fo_event == OCI_FO_ERROR){
-       print " Failover error ...\n";
-       sleep 5;                 # sleep before having another go
-       return OCI_FO_RETRY;
-    }
-    else {
-       printf(" Bad Failover Event: %d.\n",  $fo_event);
+        print " Instance Unavailable Please stand by!! \n";
+        printf(" Your TAF type is %s \n",
+                         (($fo_type==OCI_FO_NONE) ? "NONE"
+                         :($fo_type==OCI_FO_SESSION) ? "SESSION"
+                         :($fo_type==OCI_FO_SELECT) ? "SELECT"
+                         : "UNKNOWN!"));
+      }
+      elsif ($fo_event == OCI_FO_ABORT){
+         print " Failover aborted. Failover will not take place.\n";
+      }
+      elsif ($fo_event == OCI_FO_END){
+         printf(" Failover ended ...Resuming your %s\n",(($fo_type==OCI_FO_NONE) ? "NONE"
+                                                        :($fo_type==OCI_FO_SESSION) ? "SESSION"
+                                                        :($fo_type==OCI_FO_SELECT) ? "SELECT"
+                                                        : "UNKNOWN!"));
+      }
+      elsif ($fo_event == OCI_FO_REAUTH){
+         print " Failed over user. Resuming services\n";
+      }
+      elsif ($fo_event == OCI_FO_ERROR){
+         print " Failover error ...\n";
+         sleep 5;                 # sleep before having another go
+         return OCI_FO_RETRY;
+      }
+      else {
+         printf(" Bad Failover Event: %d.\n",  $fo_event);
 
       }
       return 0;
@@ -370,7 +372,7 @@ variable.
 #### ora\_taf
 
 This attribute was removed in 1.49\_00 as it was redundant. To
-enable TAF simply set ["ora_taf_function"](#ora_taf_function).
+enable TAF simply set ["ora\_taf\_function"](#ora_taf_function).
 
 #### ora\_taf\_function
 
@@ -585,8 +587,8 @@ Use this value to enable extended embedded oracle objects mode. In extended:
 #### ora\_ph\_type
 
 The default placeholder datatype for the database session.
-The `TYPE` or ["ora_type"](#ora_type) attributes to ["bind_param" in DBI](https://metacpan.org/pod/DBI#bind_param) and
-["bind_param_inout" in DBI](https://metacpan.org/pod/DBI#bind_param_inout) override the datatype for individual placeholders.
+The `TYPE` or ["ora\_type"](#ora_type) attributes to ["bind\_param" in DBI](https://metacpan.org/pod/DBI#bind_param) and
+["bind\_param\_inout" in DBI](https://metacpan.org/pod/DBI#bind_param_inout) override the datatype for individual placeholders.
 The most frequent reason for using this attribute is to permit trailing spaces
 in values passed by placeholders.
 
@@ -896,7 +898,7 @@ true for the lifetime of the statement handle.
 ## __TraceLevel__ (integer, inherited)
 
 Sets the trace level, similar to the ["trace"](#trace) method. See the sections on
-["trace"](#trace) and ["parse_trace_flag"](#parse_trace_flag) for more details.
+["trace"](#trace) and ["parse\_trace\_flag"](#parse_trace_flag) for more details.
 
 ## __Active__ (boolean, read-only)
 
@@ -917,7 +919,7 @@ Same as `Kids`, but only returns those that are active.
 ## __CachedKids__ (hash ref)
 
 Returns a hashref of handles. If called on a database handle, returns all statement handles created by use of the
-`prepare_cached` method. If called on a driver handle, returns all database handles created by the ["connect_cached"](#connect_cached)
+`prepare_cached` method. If called on a driver handle, returns all database handles created by the ["connect\_cached"](#connect_cached)
 method.
 
 ## __ChildHandles__ (array ref)
@@ -1086,11 +1088,13 @@ These attributes may be used in the `\%attr` parameter of the
 
 - ora\_clbk\_lob
 
-    If true the ["Piecewise Fetch with Callback"](#piecewise-fetch-with-callback) method for the ["Data Interface for Persistent LOBs"](#data-interface-for-persistent-lobs) will be used for LOBs.
+    If true the ["Piecewise Fetch with Callback"](#piecewise-fetch-with-callback) method for the ["Data
+    Interface for Persistent LOBs"](#data-interface-for-persistent-lobs) will be used for LOBs.
 
 - ora\_piece\_lob
 
-    If true the ["Piecewise Fetch with Polling"](#piecewise-fetch-with-polling) method for the ["Data Interface for Persistent LOBs"](#data-interface-for-persistent-lobs) will be used for LOBs.
+    If true the ["Piecewise Fetch with Polling"](#piecewise-fetch-with-polling) method for the ["Data
+    Interface for Persistent LOBs"](#data-interface-for-persistent-lobs) will be used for LOBs.
 
 - ora\_piece\_size
 
@@ -1122,7 +1126,8 @@ These attributes may be used in the `\%attr` parameter of the
 - ora\_prefetch\_memory
 
     Sets the memory level for rows to be prefetched. The application then
-    fetches as many rows as will fit into that much memory.  See ["Row Prefetching"](#row-prefetching) for more details.
+    fetches as many rows as will fit into that much memory.  See ["Row
+    Prefetching"](#row-prefetching) for more details.
 
 - ora\_row\_cache\_off
 
@@ -1141,7 +1146,7 @@ The first is the "question mark" type, in which each placeholder is
 represented by a single question mark character. This is the method
 recommended by the DBI and is the most portable. Each question
 mark is internally replaced by a "dollar sign number" in the order in
-which they appear in the query (important when using ["bind_param"](#bind_param)).
+which they appear in the query (important when using ["bind\_param"](#bind_param)).
 
 The second type of placeholder is "named parameters" in the format
 ":foo" which is the one Oracle prefers.
@@ -1296,7 +1301,7 @@ removes quotes.
 Oracle does not support catalogues so TABLE\_CAT is ignored as
 selection criterion.
 The TABLE\_CAT field of a fetched row is always NULL (undef).
-See ["table_info()"](#table_info) for more detailed information.
+See ["table\_info()"](#table_info) for more detailed information.
 
 If the primary key constraint was created without an identifier,
 PK\_NAME contains a system generated name with the form SYS\_Cn.
@@ -1305,7 +1310,7 @@ The result set is ordered by TABLE\_SCHEM, TABLE\_NAME, KEY\_SEQ.
 
 An identifier is passed _as is_, i.e. as the user provides or
 Oracle returns it.
-See ["table_info()"](#table_info) for more detailed information.
+See ["table\_info()"](#table_info) for more detailed information.
 
 ## __foreign\_key\_info()__
 
@@ -1317,7 +1322,7 @@ Oracle does not support catalogues, so `$pk_catalog` and `$fk_catalog` are
 ignored as selection criteria (in the new style interface).
 The UK\_TABLE\_CAT and FK\_TABLE\_CAT fields of a fetched row are always
 NULL (undef).
-See ["table_info()"](#table_info) for more detailed information.
+See ["table\_info()"](#table_info) for more detailed information.
 
 If the primary or foreign key constraints were created without an identifier,
 UK\_NAME or FK\_NAME contains a system generated name with the form SYS\_Cn.
@@ -1325,7 +1330,7 @@ UK\_NAME or FK\_NAME contains a system generated name with the form SYS\_Cn.
 The UPDATE\_RULE field is always 3 ('NO ACTION'), because Oracle (currently)
 does not support other actions.
 
-The DELETE\_RULE field may contain wrong values. This is a known Bug (\#1271663)
+The DELETE\_RULE field may contain wrong values. This is a known Bug (#1271663)
 in Oracle's data dictionary views. Currently (as of 8.1.7), 'RESTRICT' and
 'SET DEFAULT' are not supported, 'CASCADE' is mapped correctly and all other
 actions (incl. 'SET NULL') appear as 'NO ACTION'.
@@ -1338,14 +1343,14 @@ FK\_TABLE\_NAME, ORDINAL\_POSITION.
 
 An identifier is passed _as is_, i.e. as the user provides or
 Oracle returns it.
-See ["table_info()"](#table_info) for more detailed information.
+See ["table\_info()"](#table_info) for more detailed information.
 
 ## __column\_info()__
 
 Oracle does not support catalogues so TABLE\_CAT is ignored as
 selection criterion.
 The TABLE\_CAT field of a fetched row is always NULL (undef).
-See ["table_info()"](#table_info) for more detailed information.
+See ["table\_info()"](#table_info) for more detailed information.
 
 The CHAR\_OCTET\_LENGTH field is (currently) always NULL (undef).
 
@@ -1364,7 +1369,7 @@ The result set is ordered by TABLE\_SCHEM, TABLE\_NAME, ORDINAL\_POSITION.
 
 An identifier is passed _as is_, i.e. as the user provides or
 Oracle returns it.
-See ["table_info()"](#table_info) for more detailed information.
+See ["table\_info()"](#table_info) for more detailed information.
 
 It is possible with Oracle to make the names of the various DB objects (table,column,index etc)
 case sensitive.
@@ -1382,7 +1387,7 @@ any case can be used to get info on the column.
 Oracle does not support catalogues so TABLE\_CAT is ignored as
 selection criterion.
 The TABLE\_CAT field of a fetched row is always NULL (undef).
-See ["table_info()"](#table_info) for more detailed information.
+See ["table\_info()"](#table_info) for more detailed information.
 
 The INDEX\_QUALIFIER field of a fetched row is always NULL (undef),
 for the same reason as for TABLE\_CAT.
@@ -1409,7 +1414,7 @@ NON\_UNIQUE, TYPE, INDEX\_QUALIFIER, INDEX\_NAME, ORDINAL\_POSITION.
 
 An identifier is passed _as is_, i.e. as the user provides or
 Oracle returns it.
-See ["table_info()"](#table_info) for more detailed information.
+See ["table\_info()"](#table_info) for more detailed information.
 
 ## __selectrow\_array__
 
@@ -1418,7 +1423,7 @@ See ["table_info()"](#table_info) for more detailed information.
     @row_ary = $dbh->selectrow_array($sql, \%attr, @bind_values);
 
 Returns an array of row information after preparing and executing the provided SQL string. The rows are returned
-by calling ["fetchrow_array"](#fetchrow_array). The string can also be a statement handle generated by a previous prepare. Note that
+by calling ["fetchrow\_array"](#fetchrow_array). The string can also be a statement handle generated by a previous prepare. Note that
 only the first row of data is returned. If called in a scalar context, only the first column of the first row is
 returned. Because this is not portable, it is not recommended that you use this method in that way.
 
@@ -1428,8 +1433,8 @@ returned. Because this is not portable, it is not recommended that you use this 
     $ary_ref = $dbh->selectrow_arrayref($statement, \%attr);
     $ary_ref = $dbh->selectrow_arrayref($statement, \%attr, @bind_values);
 
-Exactly the same as ["selectrow_array"](#selectrow_array), except that it returns a reference to an array, by internal use of
-the ["fetchrow_arrayref"](#fetchrow_arrayref) method.
+Exactly the same as ["selectrow\_array"](#selectrow_array), except that it returns a reference to an array, by internal use of
+the ["fetchrow\_arrayref"](#fetchrow_arrayref) method.
 
 ## __selectrow\_hashref__
 
@@ -1437,8 +1442,8 @@ the ["fetchrow_arrayref"](#fetchrow_arrayref) method.
     $hash_ref = $dbh->selectrow_hashref($sql, \%attr);
     $hash_ref = $dbh->selectrow_hashref($sql, \%attr, @bind_values);
 
-Exactly the same as ["selectrow_array"](#selectrow_array), except that it returns a reference to an hash, by internal use of
-the ["fetchrow_hashref"](#fetchrow_hashref) method.
+Exactly the same as ["selectrow\_array"](#selectrow_array), except that it returns a reference to an hash, by internal use of
+the ["fetchrow\_hashref"](#fetchrow_hashref) method.
 
 ## __clone__
 
@@ -1568,7 +1573,7 @@ modify your "use DBI" statement at the top of your script as follows:
     use DBI qw(:sql_types);
 
 This will import some constants into your script. You can plug those
-directly into the ["bind_param"](#bind_param) call. Some common ones that you will
+directly into the ["bind\_param"](#bind_param) call. Some common ones that you will
 encounter are:
 
     SQL_INTEGER
@@ -1578,7 +1583,7 @@ To use Oracle SQL data types, import the list of values like this:
     use DBD::Pg qw(:ora_types);
 
 You can then set the data types by setting the value of the `ora_type`
-key in the hash passed to ["bind_param"](#bind_param).
+key in the hash passed to ["bind\_param"](#bind_param).
 The current list of Oracle data types exported is:
 
     ORA_VARCHAR2 ORA_STRING ORA_NUMBER ORA_LONG ORA_ROWID ORA_DATE ORA_RAW
@@ -1627,7 +1632,7 @@ Examples:
     $sth->execute();
 
 These attributes may be used in the `\%attr` parameter of the
-["bind_param" in DBI](https://metacpan.org/pod/DBI#bind_param) or ["bind_param_inout" in DBI](https://metacpan.org/pod/DBI#bind_param_inout) statement handle methods.
+["bind\_param" in DBI](https://metacpan.org/pod/DBI#bind_param) or ["bind\_param\_inout" in DBI](https://metacpan.org/pod/DBI#bind_param_inout) statement handle methods.
 
 - ora\_type
 
@@ -1657,7 +1662,7 @@ These attributes may be used in the `\%attr` parameter of the
 
     See ["LOBS AND LONGS"](#lobs-and-longs) for how to use ORA\_CLOB and ORA\_BLOB.
 
-    See ["SYS.DBMS_SQL datatypes"](#sys-dbms_sql-datatypes) for ORA\_VARCHAR2\_TABLE, ORA\_NUMBER\_TABLE.
+    See ["SYS.DBMS\_SQL datatypes"](#sys-dbms_sql-datatypes) for ORA\_VARCHAR2\_TABLE, ORA\_NUMBER\_TABLE.
 
     See ["Data Interface for Persistent LOBs"](#data-interface-for-persistent-lobs) for the correct way to use SQLT\_CHR and SQLT\_BIN.
 
@@ -1710,7 +1715,7 @@ However, it also means that SQL errors are not detected until
 use of $sth->{NAME} or a similar attribute and the describe fails then
 _an exception is thrown_ even if `RaiseError` is false!
 
-Set ["ora_check_sql"](#ora_check_sql) to 0 in prepare() to enable this behaviour.
+Set ["ora\_check\_sql"](#ora_check_sql) to 0 in prepare() to enable this behaviour.
 
 ## __bind\_param\_inout__
 
@@ -1757,7 +1762,7 @@ with code like this:
     $sth->bind_param_inout_array(2,\@out_values,0,{ora_type => ORA_VARCHAR2});
     $sth->execute_array({ArrayTupleStatus=>\@status}) or die "error inserting";
     foreach my $id (@out_values){
-	print 'returned id='.$id.'\n';
+          print 'returned id='.$id.'\n';
     }
 
 Which will return all the ids into @out\_values.
@@ -1832,9 +1837,9 @@ package.  Here's the new package specification and body :
     CREATE OR REPLACE PACKAGE Array_Example AS
         --
         TYPE tRec IS RECORD (
-	  Col1    NUMBER,
-	  Col2    VARCHAR2 (10),
-	  Col3    DATE) ;
+            Col1    NUMBER,
+            Col2    VARCHAR2 (10),
+            Col3    DATE) ;
         --
         TYPE taRec IS TABLE OF tRec INDEX BY BINARY_INTEGER ;
         --
@@ -1849,9 +1854,9 @@ package.  Here's the new package specification and body :
         l_Ret  taRec ;
     BEGIN
         FOR i IN 1 .. 5 LOOP
-	  l_Ret (i).Col1 := i ;
-	  l_Ret (i).Col2 := 'Row : ' || i ;
-	  l_Ret (i).Col3 := TRUNC (SYSDATE) + i ;
+            l_Ret (i).Col1 := i ;
+            l_Ret (i).Col2 := 'Row : ' || i ;
+            l_Ret (i).Col3 := TRUNC (SYSDATE) + i ;
         END LOOP ;
         RETURN l_Ret ;
     END ;
@@ -1861,13 +1866,13 @@ package.  Here's the new package specification and body :
     BEGIN
         l_Set := Array_Func ;
         FOR i IN l_Set.FIRST .. l_Set.LAST LOOP
-	  PIPE ROW (
-	      tArray_Example__taRec (
-		  l_Set (i).Col1,
-		  l_Set (i).Col2,
-		  l_Set (i).Col3
-	      )
-	  ) ;
+            PIPE ROW (
+                tArray_Example__taRec (
+                    l_Set (i).Col1,
+                    l_Set (i).Col2,
+                    l_Set (i).Col3
+                )
+            ) ;
         END LOOP ;
         RETURN ;
     END ;
@@ -1891,13 +1896,13 @@ and __SYS.DBMS\_SQL.NUMBER\_TABLE__ datatypes. The simple example is here:
 
     my $statement='
     DECLARE
-    	tbl	SYS.DBMS_SQL.VARCHAR2_TABLE;
+        tbl     SYS.DBMS_SQL.VARCHAR2_TABLE;
     BEGIN
-    	tbl := :mytable;
-    	:cc := tbl.count();
-    	tbl(1) := \'def\';
-    	tbl(2) := \'ijk\';
-    	:mytable := tbl;
+        tbl := :mytable;
+        :cc := tbl.count();
+        tbl(1) := \'def\';
+        tbl(2) := \'ijk\';
+        :mytable := tbl;
     END;
     ';
 
@@ -1911,8 +1916,8 @@ and __SYS.DBMS\_SQL.NUMBER\_TABLE__ datatypes. The simple example is here:
     } ) ;
     $sth->bind_param_inout(":cc", \$cc, 100  );
     $sth->execute();
-    print	"Result: cc=",$cc,"\n",
-    	"\tarr=",Data::Dumper::Dumper(\@arr),"\n";
+    print       "Result: cc=",$cc,"\n",
+        "\tarr=",Data::Dumper::Dumper(\@arr),"\n";
 
 - __Note:__
 - Take careful note that we use '\\\\@arr' here because  the 'bind\_param\_inout'
@@ -2033,7 +2038,7 @@ DBD::Oracle supports this undocumented feature of DBI. See ["Returning A Value f
     $rv = $sth->bind_param_array($param_num, $array_ref_or_value, \%attr)
 
 Binds an array of values to a placeholder, so that each is used in turn by a call
-to the ["execute_array"](#execute_array) method.
+to the ["execute\_array"](#execute_array) method.
 
 ## __execute__
 
@@ -2051,7 +2056,7 @@ Perform whatever processing is necessary to execute the prepared statement.
     ($tuples, $rows) = $sth->execute_array(\%attr, @bind_values) or die $sth->errstr;
 
 Execute a prepared statement once for each item in a passed-in hashref, or items that
-were previously bound via the ["bind_param_array"](#bind_param_array) method. See the DBI documentation
+were previously bound via the ["bind\_param\_array"](#bind_param_array) method. See the DBI documentation
 for more details.
 
 DBD::Oracle takes full advantage of OCI's array interface so inserts and updates using this interface will run very
@@ -2065,7 +2070,7 @@ quickly.
     ($tuples, $rows) = $sth->execute_for_fetch($fetch_tuple_sub);
     ($tuples, $rows) = $sth->execute_for_fetch($fetch_tuple_sub, \@tuple_status);
 
-Used internally by the ["execute_array"](#execute_array) method, and rarely used directly. See the
+Used internally by the ["execute\_array"](#execute_array) method, and rarely used directly. See the
 DBI documentation for more details.
 
 ## __fetchrow\_arrayref__
@@ -2081,13 +2086,13 @@ was due to an error.
 
 Note that the same array reference is returned for each fetch, so don't store the reference and
 then use it after a later fetch. Also, the elements of the array are also reused for each row,
-so take care if you want to take a reference to an element. See also ["bind_columns"](#bind_columns).
+so take care if you want to take a reference to an element. See also ["bind\_columns"](#bind_columns).
 
 ## __fetchrow\_array__
 
     @ary = $sth->fetchrow_array;
 
-Similar to the ["fetchrow_arrayref"](#fetchrow_arrayref) method, but returns a list of column information rather than
+Similar to the ["fetchrow\_arrayref"](#fetchrow_arrayref) method, but returns a list of column information rather than
 a reference to a list. Do not use this in a scalar context.
 
 ## __fetchrow\_hashref__
@@ -2116,13 +2121,13 @@ statement handle. If there are no more rows, an empty arrayref will be returned.
 the data read in so far will be returned. Because of this, you should always check `$sth->err` after
 calling this method, unless ["RaiseError"](#raiseerror) has been enabled.
 
-If `$slice` is an array reference, fetchall\_arrayref uses the ["fetchrow_arrayref"](#fetchrow_arrayref) method to fetch each
+If `$slice` is an array reference, fetchall\_arrayref uses the ["fetchrow\_arrayref"](#fetchrow_arrayref) method to fetch each
 row as an array ref. If the `$slice` array is not empty then it is used as a slice to select individual
 columns by perl array index number (starting at 0, unlike column and parameter numbers which start at 1).
 
 With no parameters, or if $slice is undefined, fetchall\_arrayref acts as if passed an empty array ref.
 
-If `$slice` is a hash reference, fetchall\_arrayref uses ["fetchrow_hashref"](#fetchrow_hashref) to fetch each row as a hash reference.
+If `$slice` is a hash reference, fetchall\_arrayref uses ["fetchrow\_hashref"](#fetchrow_hashref) to fetch each row as a hash reference.
 
 See the DBI documentation for a complete discussion.
 
@@ -2167,7 +2172,7 @@ See the DBI documentation for a discussion of the optional parameters `\%attr` a
 
     $rv = $sth->bind_columns(@list_of_refs_to_vars_to_bind);
 
-Calls the ["bind_col"](#bind_col) method for each column in the SELECT statement, using the supplied list.
+Calls the ["bind\_col"](#bind_col) method for each column in the SELECT statement, using the supplied list.
 
 ## __dump\_results__
 
@@ -2271,7 +2276,7 @@ are the same as returned by the ParamValues method. The values are hashrefs cont
 pair, in which the key is either 'TYPE' if the type has a generic SQL equivalent, and 'pg\_type' if the type can
 only be expressed by a Postgres type. The value is the internal number corresponding to the type originally
 passed in. (Placeholders that have not yet been bound will return undef as the value). This allows the output of
-ParamTypes to be passed back to the ["bind_param"](#bind_param) method.
+ParamTypes to be passed back to the ["bind\_param"](#bind_param) method.
 
 ## __Statement__ (string, read-only)
 
@@ -2585,8 +2590,8 @@ an 'ORA-01062: unable to allocate memory for define buffer' error.  One solution
 For example give this table;
 
     CREATE TABLE test_long (
-    	    id NUMBER,
-	    long1 long)
+              id NUMBER,
+              long1 long)
 
 this code;
 
@@ -2810,7 +2815,7 @@ Below are the limitations of Remote LOBs;
     so the following returns an error:
 
         SELECT t1.lobcol,
-        	 a2.lobcol
+               a2.lobcol
           FROM t1,
                t2.lobcol@dbs2 a2 W
          WHERE LENGTH(t1.lobcol) = LENGTH(a2.lobcol);
@@ -2902,14 +2907,14 @@ LOB operations simple by hiding the LOB Locator processing:
     - To INSERT a LOB, you need UPDATE privilege.
 
 The alternative is to disable the automatic LOB Locator processing.
-If ["ora_auto_lob"](#ora_auto_lob) is 0 in prepare(), you can fetch the LOB Locators and
+If ["ora\_auto\_lob"](#ora_auto_lob) is 0 in prepare(), you can fetch the LOB Locators and
 do all the work yourself using the ora\_lob\_\*() methods.
 See the ["Data Interface for LOB Locators"](#data-interface-for-lob-locators) section below.
 
 ### LOB support in PL/SQL
 
 LOB Locators can be passed to PL/SQL calls by binding them to placeholders
-with the proper `ora_type`.  If ["ora_auto_lob"](#ora_auto_lob) is true, output LOB
+with the proper `ora_type`.  If ["ora\_auto\_lob"](#ora_auto_lob) is true, output LOB
 parameters will be automatically returned as strings.
 
 If the Oracle driver has support for temporary LOBs (Oracle 9i and higher),
@@ -2917,8 +2922,8 @@ strings can be bound to input LOB placeholders and will be automatically
 converted to LOBs.
 
 Example:
-     \# Build a large XML document, bind it as a CLOB,
-     \# extract elements through PL/SQL and return as a CLOB
+     # Build a large XML document, bind it as a CLOB,
+     # extract elements through PL/SQL and return as a CLOB
 
      # $dbh is a connected database handle
      # output will be large
@@ -2930,7 +2935,6 @@ Example:
      $in_clob .= "</document>\n";
 
      my $out_clob;
-
 
 
      my $sth = $dbh->prepare(<<PLSQL_END);
@@ -3276,10 +3280,10 @@ Comparison Semantics in Oracle's SQL Reference or Server
 SQL Reference for more details.
 
 To preserve trailing spaces in placeholder values for Oracle clients that use OCI 8,
-either change the default placeholder type with ["ora_ph_type"](#ora_ph_type) or the placeholder
-type for a particular call to ["bind" in DBI](https://metacpan.org/pod/DBI#bind) or ["bind_param_inout" in DBI](https://metacpan.org/pod/DBI#bind_param_inout)
-with ["ora_type"](#ora_type) or `TYPE`.
-Using [ORA_CHAR](https://metacpan.org/pod/ORA_CHAR) with [ora_type](https://metacpan.org/pod/ora_type) or `SQL_CHAR` with `TYPE`
+either change the default placeholder type with ["ora\_ph\_type"](#ora_ph_type) or the placeholder
+type for a particular call to ["bind" in DBI](https://metacpan.org/pod/DBI#bind) or ["bind\_param\_inout" in DBI](https://metacpan.org/pod/DBI#bind_param_inout)
+with ["ora\_type"](#ora_type) or `TYPE`.
+Using [ORA\_CHAR](https://metacpan.org/pod/ORA_CHAR) with [ora\_type](https://metacpan.org/pod/ora_type) or `SQL_CHAR` with `TYPE`
 allows the placeholder to be used with Padded Comparison Semantics
 if the value it is being compared to is a CHAR, NCHAR, or literal.
 
@@ -3293,9 +3297,9 @@ Oracle Clients that use OCI 9.2 do not strip trailing spaces.
 
 Oracle Clients after OCI 9.2 will automatically pad CHAR placeholder values to the size of the CHAR.
 As the default placeholder type value in DBD::Oracle is ORA\_VARCHAR2 to access this behaviour you will
-have to change the default placeholder type with ["ora_ph_type"](#ora_ph_type) or placeholder
-type for a particular call with ["bind" in DBI](https://metacpan.org/pod/DBI#bind) or ["bind_param_inout" in DBI](https://metacpan.org/pod/DBI#bind_param_inout)
-with ["ORA_CHAR"](#ora_char).
+have to change the default placeholder type with ["ora\_ph\_type"](#ora_ph_type) or placeholder
+type for a particular call with ["bind" in DBI](https://metacpan.org/pod/DBI#bind) or ["bind\_param\_inout" in DBI](https://metacpan.org/pod/DBI#bind_param_inout)
+with ["ORA\_CHAR"](#ora_char).
 
 # UNICODE
 
@@ -3501,9 +3505,9 @@ Array example, given this type and table;
     CREATE OR REPLACE TYPE  "PHONE_NUMBERS" as varray(10) of varchar(30);
 
     CREATE TABLE  "CONTACT"
-       (	"COMPANYNAME" VARCHAR2(40),
-    	"ADDRESS" VARCHAR2(100),
-    	"PHONE_NUMBERS"  "PHONE_NUMBERS"
+       (  "COMPANYNAME" VARCHAR2(40),
+          "ADDRESS" VARCHAR2(100),
+          "PHONE_NUMBERS"  "PHONE_NUMBERS"
      )
 
 The code to access all the data in the table could be something like this;
@@ -3714,17 +3718,17 @@ one can insert data using this code
 
     $SQL='insert into books values (1,:p_xml)';
     $xml= '<Books>
-	  	<Book id=1>
-	  		<Title>Programming the Perl DBI</Title>
-	                <Subtitle>The Cheetah Book</Subtitle>
-	                <Authors>
-	                	<Author>T. Bunce</Author>
-	                	<Author>Alligator Descartes</Author>
-	                </Authors>
+                 <Book id=1>
+                         <Title>Programming the Perl DBI</Title>
+                         <Subtitle>The Cheetah Book</Subtitle>
+                         <Authors>
+                                 <Author>T. Bunce</Author>
+                                 <Author>Alligator Descartes</Author>
+                         </Authors>
 
-	        </Book>
-	        <Book id=10000>...
-	    </Books>';
+                 </Book>
+                 <Book id=10000>...
+             </Books>';
     my $sth =$dbh-> prepare($SQL);
     $sth-> bind_param("p_xml", $xml, { ora_type => ORA_XMLTYPE });
     $sth-> execute();
@@ -3890,67 +3894,67 @@ is 0, which disables pre-fetching for queries involving nested cursors.
 
 Most of these PL/SQL examples come from: Eric Bartley <bartley@cc.purdue.edu>.
 
-    /*
-     * PL/SQL to create package with stored procedures invoked by
-     * Perl examples.  Execute using sqlplus.
-     *
-     * Use of "... OR REPLACE" prevents failure in the event that the
-     * package already exists.
-     */
+     /*
+      * PL/SQL to create package with stored procedures invoked by
+      * Perl examples.  Execute using sqlplus.
+      *
+      * Use of "... OR REPLACE" prevents failure in the event that the
+      * package already exists.
+      */
 
-    CREATE OR REPLACE PACKAGE plsql_example
-    IS
-      PROCEDURE proc_np;
+      CREATE OR REPLACE PACKAGE plsql_example
+      IS
+        PROCEDURE proc_np;
 
-      PROCEDURE proc_in (
-          err_code IN NUMBER
-      );
+        PROCEDURE proc_in (
+            err_code IN NUMBER
+        );
 
-      PROCEDURE proc_in_inout (
-          test_num IN NUMBER,
-          is_odd IN OUT NUMBER
-      );
+        PROCEDURE proc_in_inout (
+            test_num IN NUMBER,
+            is_odd IN OUT NUMBER
+        );
 
-      FUNCTION func_np
-        RETURN VARCHAR2;
+        FUNCTION func_np
+          RETURN VARCHAR2;
 
       END plsql_example;
     /
 
-    CREATE OR REPLACE PACKAGE BODY plsql_example
-    IS
-      PROCEDURE proc_np
+      CREATE OR REPLACE PACKAGE BODY plsql_example
       IS
-        whoami VARCHAR2(20) := NULL;
-      BEGIN
-        SELECT USER INTO whoami FROM DUAL;
-      END;
+        PROCEDURE proc_np
+        IS
+          whoami VARCHAR2(20) := NULL;
+        BEGIN
+          SELECT USER INTO whoami FROM DUAL;
+        END;
 
-      PROCEDURE proc_in (
-        err_code IN NUMBER
-      )
-      IS
-      BEGIN
-        RAISE_APPLICATION_ERROR(err_code, 'This is a test.');
-      END;
+        PROCEDURE proc_in (
+          err_code IN NUMBER
+        )
+        IS
+        BEGIN
+          RAISE_APPLICATION_ERROR(err_code, 'This is a test.');
+        END;
 
-      PROCEDURE proc_in_inout (
-        test_num IN NUMBER,
-        is_odd IN OUT NUMBER
-      )
-      IS
-      BEGIN
-        is_odd := MOD(test_num, 2);
-      END;
+        PROCEDURE proc_in_inout (
+          test_num IN NUMBER,
+          is_odd IN OUT NUMBER
+        )
+        IS
+        BEGIN
+          is_odd := MOD(test_num, 2);
+        END;
 
-      FUNCTION func_np
-        RETURN VARCHAR2
-      IS
-        ret_val VARCHAR2(20);
-      BEGIN
-        SELECT USER INTO ret_val FROM DUAL;
-        RETURN ret_val;
-      END;
+        FUNCTION func_np
+          RETURN VARCHAR2
+        IS
+          ret_val VARCHAR2(20);
+        BEGIN
+          SELECT USER INTO ret_val FROM DUAL;
+          RETURN ret_val;
+        END;
 
       END plsql_example;
     /
@@ -3967,7 +3971,7 @@ Most of these PL/SQL examples come from: Eric Bartley <bartley@cc.purdue.edu>.
     # See the DBI docs now if you're not familiar with RaiseError.
     $db->{RaiseError} = 1;
 
-    # Example 1	Eric Bartley <bartley@cc.purdue.edu>
+    # Example 1   Eric Bartley <bartley@cc.purdue.edu>
     #
     # Calling a PLSQL procedure that takes no parameters. This shows you the
     # basic's of what you need to execute a PLSQL procedure. Just wrap your
@@ -3984,8 +3988,7 @@ Most of these PL/SQL examples come from: Eric Bartley <bartley@cc.purdue.edu>.
     $csr->execute;
 
 
-
-    # Example 2	Eric Bartley <bartley@cc.purdue.edu>
+    # Example 2   Eric Bartley <bartley@cc.purdue.edu>
     #
     # Now we call a procedure that has 1 IN parameter. Here we use bind_param
     # to bind out parameter to the prepared statement just like you might
@@ -3998,9 +4001,9 @@ Most of these PL/SQL examples come from: Eric Bartley <bartley@cc.purdue.edu>.
     my $err_code = -20001;
 
     $csr = $db->prepare(q{
-    	BEGIN
-    	    PLSQL_EXAMPLE.PROC_IN(:err_code);
-    	END;
+          BEGIN
+              PLSQL_EXAMPLE.PROC_IN(:err_code);
+          END;
     });
 
     $csr->bind_param(":err_code", $err_code);
@@ -4013,8 +4016,7 @@ Most of these PL/SQL examples come from: Eric Bartley <bartley@cc.purdue.edu>.
     print 'After proc_in: $@=',"'$@', errstr=$DBI::errstr, ret_val=$ret_val\n";
 
 
-
-    # Example 3	Eric Bartley <bartley@cc.purdue.edu>
+    # Example 3   Eric Bartley <bartley@cc.purdue.edu>
     #
     # Building on the last example, I've added 1 IN OUT parameter. We still
     # use a placeholders in the call to prepare, the difference is that
@@ -4029,9 +4031,9 @@ Most of these PL/SQL examples come from: Eric Bartley <bartley@cc.purdue.edu>.
     my $is_odd;
 
     $csr = $db->prepare(q{
-    	BEGIN
-    	    PLSQL_EXAMPLE.PROC_IN_INOUT(:test_num, :is_odd);
-    	END;
+          BEGIN
+              PLSQL_EXAMPLE.PROC_IN_INOUT(:test_num, :is_odd);
+          END;
     });
 
     # The value of $test_num is _copied_ here
@@ -4045,8 +4047,7 @@ Most of these PL/SQL examples come from: Eric Bartley <bartley@cc.purdue.edu>.
     print "$test_num is ", ($is_odd) ? "odd - ok" : "even - error!", "\n";
 
 
-
-    # Example 4	Eric Bartley <bartley@cc.purdue.edu>
+    # Example 4   Eric Bartley <bartley@cc.purdue.edu>
     #
     # What about the return value of a PLSQL function? Well treat it the same
     # as you would a call to a function from SQL*Plus. We add a placeholder
@@ -4056,9 +4057,9 @@ Most of these PL/SQL examples come from: Eric Bartley <bartley@cc.purdue.edu>.
     my $whoami = "";
 
     $csr = $db->prepare(q{
-    	BEGIN
-    	    :whoami := PLSQL_EXAMPLE.FUNC_NP;
-    	END;
+          BEGIN
+              :whoami := PLSQL_EXAMPLE.FUNC_NP;
+          END;
     });
 
     $csr->bind_param_inout(":whoami", \$whoami, 20);
