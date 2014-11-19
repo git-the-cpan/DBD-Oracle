@@ -11,10 +11,8 @@ my $ORACLE_ENV  = ($^O eq 'VMS') ? 'ORA_ROOT' : 'ORACLE_HOME';
 
 {
 package DBD::Oracle;
-$DBD::Oracle::VERSION = '1.74';
-BEGIN {
-  $DBD::Oracle::AUTHORITY = 'cpan:PYTHIAN';
-}
+$DBD::Oracle::VERSION = '1.75_2';
+our $AUTHORITY = 'cpan:PYTHIAN';
 # ABSTRACT: Oracle database driver for the DBI module
 
     use DBI ();
@@ -1077,6 +1075,9 @@ SQL
             my @version = $banner =~ /(?:^|\s)(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)(?:\s|$)/;
             $dbh->{ora_server_version} = \@version if @version;
         }
+
+        # TODO looks like a bug that we don't return
+        # $dbh->{ora_server_version} here
     }
 
     sub ora_nls_parameters {
@@ -1225,7 +1226,7 @@ DBD::Oracle - Oracle database driver for the DBI module
 
 =head1 VERSION
 
-version 1.74
+version 1.75_2
 
 =head1 SYNOPSIS
 

@@ -7,7 +7,7 @@
       "Martin J. Evans <mjevans@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 5.014, CPAN::Meta::Converter version 2.140640",
+   "generated_by" : "Dist::Zilla version 5.025, CPAN::Meta::Converter version 2.142690",
    "license" : [
       "perl_5"
    ],
@@ -20,7 +20,7 @@
       "configure" : {
          "requires" : {
             "DBI" : "1.51",
-            "ExtUtils::MakeMaker" : "6.30"
+            "ExtUtils::MakeMaker" : "0"
          }
       },
       "develop" : {
@@ -57,37 +57,28 @@
    "provides" : {
       "DBD::Oracle" : {
          "file" : "lib/DBD/Oracle.pm",
-         "version" : "1.74"
+         "version" : "1.75_2"
       },
       "DBD::Oracle::GetInfo" : {
          "file" : "lib/DBD/Oracle/GetInfo.pm",
-         "version" : "1.74"
+         "version" : "1.75_2"
       },
       "DBD::Oracle::Object" : {
          "file" : "lib/DBD/Oracle/Object.pm",
-         "version" : "1.74"
+         "version" : "1.75_2"
       }
    },
-   "release_status" : "stable",
-   "resources" : {
-      "bugtracker" : {
-         "web" : "https://github.com/pythian/DBD-Oracle/issues"
-      },
-      "homepage" : "http://search.cpan.org/dist/DBD-Oracle/",
-      "repository" : {
-         "type" : "git",
-         "url" : "https://github.com/pythian/DBD-Oracle.git",
-         "web" : "https://github.com/pythian/DBD-Oracle"
-      }
-   },
-   "version" : "1.74",
+   "release_status" : "testing",
+   "version" : "1.75_2",
    "x_authority" : "cpan:PYTHIAN",
    "x_contributors" : [
       "David E. Wheeler <david@justatheory.com>",
       "David Perry <perry@pythian.com>",
       "David Steinbrunner <dsteinbrunner@pobox.com>",
       "Gwen Shapira <shapira@pythian.com>",
+      "H.Merijn Brand - Tux <h.m.brand@xs4all.nl>",
       "Joe Crotty <joe.crotty@returnpath.net>",
+      "Martin J. Evans <mjegh@virginmedia.com>",
       "Michael Portnoy <portnoy@pythian.com>",
       "StephenCIQG <StephenCIQG@50811bd7-b8ce-0310-adc1-d9db26280581>",
       "cjardine <cjardine@50811bd7-b8ce-0310-adc1-d9db26280581>",

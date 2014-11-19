@@ -13,9 +13,11 @@ README
 README.help.txt
 README.mkdn
 Todo
+cpanfile
 dbdimp.c
 dbdimp.h
 dbivport.h
+doap.xml
 examples/README
 examples/bind.pl
 examples/commit.pl

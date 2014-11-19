@@ -1,8 +1,6 @@
 package DBD::Oracle::Object;
-$DBD::Oracle::Object::VERSION = '1.74';
-BEGIN {
-  $DBD::Oracle::Object::AUTHORITY = 'cpan:PYTHIAN';
-}
+$DBD::Oracle::Object::VERSION = '1.75_2';
+our $AUTHORITY = 'cpan:PYTHIAN';
 # ABSTRACT: Wrapper for Oracle objects
 
 use strict;
@@ -40,7 +38,7 @@ DBD::Oracle::Object - Wrapper for Oracle objects
 
 =head1 VERSION
 
-version 1.74
+version 1.75_2
 
 =head1 AUTHORS
 
